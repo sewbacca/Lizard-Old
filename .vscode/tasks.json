@@ -1,0 +1,187 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Compile Release (Tests)",
+			"command": "make tests",
+			"type": "shell",
+			"problemMatcher": [
+				{
+					"base": "$gcc",
+					"fileLocation": "autoDetect"
+				},
+				{
+					"owner": "test.exe",
+					"source": "Test",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern":[
+						{
+							"regexp": "(.+)\\((\\d+)\\): error: in (.+)",
+							"file": 1,
+							"line": 2,
+							"column": 0,
+							"message": 3,
+						}
+					]
+				}
+			],
+			"presentation": {
+				"reveal": "always",
+				"revealProblems": "onProblem",
+				"clear": true
+			},
+			"options": {
+				"env": {
+					"RELEASE": "1",
+					"LINUX": "1"
+				}
+			},
+			"group": "build"
+		},
+		{
+			"label": "Compile Debug (Tests)",
+			"command": "make tests",
+			"type": "shell",
+			"problemMatcher": [
+				{
+					"base": "$gcc",
+					"fileLocation": "autoDetect"
+				},
+				{
+					"owner": "test.exe",
+					"source": "Test",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern":[
+						{
+							"regexp": "(.+)\\((\\d+)\\): error: in (.+)",
+							"file": 1,
+							"line": 2,
+							"column": 0,
+							"message": 3,
+						}
+					]
+				}
+			],
+			"presentation": {
+				"reveal": "always",
+				"revealProblems": "onProblem",
+				"clear": true
+			},
+			"options": {
+				"env": {
+					"DEBUG": "1",
+					"LINUX": "1"
+				}
+			},
+			"group": "build"
+		},
+		{
+			"label": "Compile Debug (Lizard)",
+			"command": "make exec",
+			"type": "shell",
+			"options": {
+				"env": {
+					"DEBUG": "1",
+					"LINUX": "1"
+				}
+			},
+			"problemMatcher": [
+				"$gcc",
+				{
+					"fileLocation": "absolute",
+					"pattern":[
+						{
+							"regexp": "ld\\.exe: .+?:.+?:",
+						},
+						{
+							"regexp": "([cC]:.+?):(\\d+): (.+)",
+							"file": 1,
+							"line": 2,
+							"column": 0,
+							"message": 3,
+						}
+					]
+				},
+				
+				{
+					"owner": "ld.exe",
+					"source": "Linker",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern":[
+						{
+							"regexp": "ld\\.exe: (.+?):.*?\\): (.+)",
+							"file": 1,
+							"line": 0,
+							"column": 0,
+							"message": 2,
+						}
+					]
+				},
+			],
+			"presentation": {
+				"reveal": "always",
+				"revealProblems": "onProblem",
+				"echo": true,
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": true
+			},
+			"group": "build"
+		},
+		{
+			"label": "Compile Release (Lizard)",
+			"command": "make exec",
+			"type": "shell",
+			"options": {
+				"env": {
+					"RELEASE": "1",
+					"LINUX": "1"
+				}
+			},
+			"problemMatcher": [
+				"$gcc",
+				{
+					"fileLocation": "absolute",
+					"pattern":[
+						{
+							"regexp": "ld\\.exe: .+?:.+?:",
+						},
+						{
+							"regexp": "([cC]:.+?):(\\d+): (.+)",
+							"file": 1,
+							"line": 2,
+							"column": 0,
+							"message": 3,
+						}
+					]
+				},
+				
+				{
+					"owner": "ld.exe",
+					"source": "Linker",
+					"fileLocation": ["relative", "${workspaceFolder}"],
+					"pattern":[
+						{
+							"regexp": "ld\\.exe: (.+?):.*?\\): (.+)",
+							"file": 1,
+							"line": 0,
+							"column": 0,
+							"message": 2,
+						}
+					]
+				},
+			],
+			"presentation": {
+				"reveal": "always",
+				"revealProblems": "onProblem",
+				"echo": true,
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": true
+			},
+			"group": "build"
+		}
+	]
+}

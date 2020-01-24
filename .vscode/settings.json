@@ -1,0 +1,7 @@
+{
+	"catch2TestExplorer.executables": [
+		{
+			"pattern": "bin/debug/test"
+		}
+	],
+}

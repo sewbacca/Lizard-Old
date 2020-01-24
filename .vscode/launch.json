@@ -1,0 +1,60 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Debug (Lizard)",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/bin/debug/Lizard",
+			"args": [],
+			"cwd": "${workspaceFolder}/bin/debug",
+			"environment": [],
+			"preLaunchTask": "Compile Debug (Lizard)",
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "Release (Lizard)",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/bin/release/Lizard",
+			"args": [],
+			"cwd": "${workspaceFolder}/bin/release",
+			"environment": [],
+			"preLaunchTask": "Compile Release (Lizard)",
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "Debug (Tests)",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "${workspaceFolder}/bin/debug/tests",
+			"args": [],
+			"cwd": "${workspaceFolder}/bin/debug",
+			"environment": [],
+			"preLaunchTask": "Compile Debug (Tests)",
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		}
+	],
+	"compounds": []
+}
