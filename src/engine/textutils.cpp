@@ -1,11 +1,63 @@
 
-#include "fen.h"
+#include "textutils.h"
 #include "bitboard.h"
+
+#include <sstream>
 
 #include <cassert>
 #include <cstring>
 #include <ctype.h>
 #include <cstdlib>
+
+std::string to_string(Position p) {
+	std::stringstream stream;
+
+	static const char PIECES[] = {
+		'P', 'N', 'B', 'R', 'Q', 'K',
+		'p', 'n', 'b', 'r', 'q', 'k',
+		'.'
+	};
+
+	for(int x = 0; x < BOARD_SIZE; x++)
+		stream << "--";
+	stream << "-\n";
+
+	for(int y = BOARD_SIZE - 1; y >= 0; y--) {
+		for(int x = 0; x < BOARD_SIZE; x++)
+			stream << '|' << PIECES[p.get(x, y)];
+		stream  << "|\n";
+	}
+
+	for(int x = 0; x < BOARD_SIZE; x++)
+		stream << "--";
+	stream << "-\n";
+	
+	stream << "hisply: " << p.hisply << '\n';
+	stream << "fiftyply: " << p.fiftyply << '\n';
+	
+	stream << "rights: ";
+	if(W_OO & p.rights)
+		stream << 'K';
+	if(W_OOO & p.rights)
+		stream << 'Q';
+	if(B_OO & p.rights)
+		stream << 'k';
+	if(B_OOO & p.rights)
+		stream << 'q';
+	stream << '\n';
+
+	int index = Bitboard::index(p.enpassantsq);
+
+	stream << "en pas: ";
+	if(index != -1) {
+		stream << ('a' + index % BOARD_SIZE);
+		stream << ('0' + index / BOARD_SIZE);
+	}
+
+	stream << '\n';
+
+	return stream.str();
+}
 
 static const char* skipfirstwhite(const char* c) {
 	while(*c == ' ')
@@ -24,7 +76,7 @@ static const char* skipwhite(const char* c) {
 	return c;
 }
 
-Position loadfen(const char* fen) {
+Position load_fen(const char* fen) {
 	const char* c = skipfirstwhite(fen);
 	Position result;
 
