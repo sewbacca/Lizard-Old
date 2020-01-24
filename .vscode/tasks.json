@@ -182,6 +182,15 @@
 				"clear": true
 			},
 			"group": "build"
+		},
+		{
+			"label": "Test",
+			"dependsOn": "Compile Debug (Tests)",
+			"command": "${command:test-explorer.run-all}",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
 		}
 	]
 }
