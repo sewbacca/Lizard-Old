@@ -99,6 +99,9 @@ clear-bin:
 clear-obj:
 	rm -r $(OBJ_DIR)
 
+clear-dep:
+	rm -f $(DEP_SRC) $(DEP_MAIN) $(DEP_TESTS)
+
 clear: clear-bin clear-obj
 
 # Linking
