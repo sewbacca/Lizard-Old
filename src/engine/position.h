@@ -12,6 +12,14 @@ private:
 	// Board representation
 	bitboard* board() { return &wp; }
 public:
+	Color side = WHITE;
+	CastlingSide rights = NO_CASTLING;
+	bitboard enpassantsq = 0;
+	
+	int fiftyply = 0;
+	int hisply = 0;
+	int ply = 0;
+
 	void set(int x, int y, Piece);
 	Piece get(int x, int y);
 };
