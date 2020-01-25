@@ -4,4 +4,20 @@
 			"pattern": "bin/debug/test"
 		}
 	],
+	"files.associations": {
+		"hash_map": "cpp",
+		"hash_set": "cpp",
+		"*.tcc": "cpp",
+		"bitset": "cpp",
+		"unordered_map": "cpp",
+		"unordered_set": "cpp",
+		"vector": "cpp",
+		"functional": "cpp",
+		"memory": "cpp",
+		"optional": "cpp",
+		"string_view": "cpp",
+		"system_error": "cpp",
+		"thread": "cpp",
+		"variant": "cpp"
+	},
 }
