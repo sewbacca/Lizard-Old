@@ -11,6 +11,8 @@ private:
 
 	// Board representation
 	bitboard* board() { return &wp; }
+
+	U64 m_hash {0};
 public:
 	Color side = WHITE;
 	CastlingSide rights = NO_CASTLING;
@@ -25,4 +27,6 @@ public:
 
 	Point pieces[PIECE_TYPES][MAX_PIECES];
 	int piececount [PIECE_TYPES] {};
+
+	U64 hash();
 };

@@ -4,6 +4,7 @@
 
 #include "position.h"
 #include "bitboard.h"
+#include "hash.h"
 
 Piece Position::get(int x, int y) {
 	assert(is_inside(x, y));
@@ -24,7 +25,7 @@ void Position::set(int x, int y, Piece p) {
 	Piece onboard = get(x, y);
 
 	// Delete piece
-	if(onboard != NO_PIECE) { 
+	if(onboard != NO_PIECE) {
 		board[onboard] -= Bitboard::cell(x, y);
 
 		// Find piece
@@ -36,12 +37,24 @@ void Position::set(int x, int y, Piece p) {
 				break;
 			}
 		}
+		
+		m_hash ^= get_hash(x, y, onboard);
 	}
 
 	// Add piece
 	if(p != NO_PIECE) {
+		
 		board[p] |= Bitboard::cell(x, y);
 		pieces[p][piececount[p]] = Point(x, y);
 		piececount[p]++;
+
+		m_hash ^= get_hash(x, y, p);
 	}
+}
+
+U64 Position::hash() {
+	return m_hash ^
+		get_hash(Bitboard::index(enpassantsq) % BOARD_SIZE) ^
+		get_hash(side) ^
+		get_hash(rights);
 }
