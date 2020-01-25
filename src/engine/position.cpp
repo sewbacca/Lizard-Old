@@ -1,5 +1,6 @@
 
 #include <cassert>
+#include <algorithm>
 
 #include "position.h"
 #include "bitboard.h"
@@ -9,10 +10,8 @@ Piece Position::get(int x, int y) {
 
 	auto board = this->board();
 	for(int p = 0; p < PIECE_TYPES; p++) {
-		if(!Bitboard::is_set(board[p], x, y))
-			continue;
-		
-		return (Piece) p;
+		if(Bitboard::is_set(board[p], x, y))
+			return (Piece) p;
 	}
 
 	return NO_PIECE;
@@ -20,14 +19,29 @@ Piece Position::get(int x, int y) {
 
 void Position::set(int x, int y, Piece p) {
 	assert(is_inside(x, y));
+	
+	bitboard* board = this->board();
+	Piece onboard = get(x, y);
 
-	auto board = this->board();
-	bitboard cell = Bitboard::cell(x, y);
-	if(p == NO_PIECE) {
-		for(int p = 0; p < PIECE_TYPES; p++) {
-			board[p] &= ~cell;
+	// Delete piece
+	if(onboard != NO_PIECE) { 
+		board[onboard] -= Bitboard::cell(x, y);
+
+		// Find piece
+		for(int i = 0; i < piececount[onboard]; i++) {
+			Point* pos = &pieces[onboard][i];
+			if(pos->x == x && pos->y == y) {
+				std::swap(*pos, *(pieces[onboard] + piececount[onboard] - 1));
+				piececount[onboard]--;
+				break;
+			}
 		}
 	}
-	else
-		board[p] |= cell;
+
+	// Add piece
+	if(p != NO_PIECE) {
+		board[p] |= Bitboard::cell(x, y);
+		pieces[p][piececount[p]] = Point(x, y);
+		piececount[p]++;
+	}
 }

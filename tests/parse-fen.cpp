@@ -1,8 +1,8 @@
 #include "catch.hpp"
-#include "engine/fen.h"
+#include "engine/textutils.h"
 
 TEST_CASE("Parse a fen correctly", "[fen]") {
-	Position result = loadfen(startpos);
+	Position result = load_fen(startpos);
 
 	// Pawns
 	int y = BOARD_SIZE - 2;

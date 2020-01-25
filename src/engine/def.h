@@ -9,8 +9,10 @@
 typedef uint64_t bitboard;
 typedef int_fast8_t byte;
 
+constexpr int MAX_PIECES = 10;
 constexpr int BOARD_SIZE = 8;
 constexpr int PIECE_TYPES = 12;
+
 enum Piece : byte
 {
 	WP, WN, WB, WR, WQ, WK,
@@ -36,6 +38,12 @@ enum CastlingSide : byte
 	CS_BLACK =	0b0011,
 	CS_ALL =	0b1111,
 	NO_CASTLING =	0
+};
+
+struct Point {
+	int x = 0, y = 0;
+	Point(int x, int y) : x{x}, y{y} { };
+	Point() { }
 };
 
 bool is_inside(int x, int y);

@@ -22,4 +22,7 @@ public:
 
 	void set(int x, int y, Piece);
 	Piece get(int x, int y);
+
+	Point pieces[PIECE_TYPES][MAX_PIECES];
+	int piececount [PIECE_TYPES] {};
 };
