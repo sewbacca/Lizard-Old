@@ -1,0 +1,24 @@
+name: CI Tests
+
+on: [push]
+
+jobs:
+  build-tests:
+    runs-on: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v1
+    - run: make tests DEBUG=1
+    - uses: actions/upload-artifact@v1
+      with:
+        name: test-binary
+        path: bin/debug/test
+  run-tests:
+    needs: [build-tests]
+    runs-on: [ubuntu-latest]
+    steps:
+    - uses: actions/download-artifact@v1
+      with:
+        name: test-binary
+    - run: chmod +x test-binary/test
+    - run: test-binary/test
+
