@@ -24,7 +24,7 @@ std::string to_string(Position p) {
 
 	for(int y = BOARD_SIZE - 1; y >= 0; y--) {
 		for(int x = 0; x < BOARD_SIZE; x++)
-			stream << '|' << PIECES[p.get((x + y * BOARD_SIZE))];
+			stream << '|' << PIECES[p.get(sqr(x, y))];
 		stream  << "|\n";
 	}
 
@@ -115,7 +115,7 @@ Position load_fen(const char* fen) {
 						assert(false);
 				}
 
-				result.set(x + y * BOARD_SIZE, p);
+				result.set(sqr(x, y), p);
 				x++;
 			}
 
@@ -173,7 +173,7 @@ Position load_fen(const char* fen) {
 		int x = *c - 'a'; c++;
 		int y = *c - '1';
 
-		result.enpassantsq = Bitboard::cell(x + y * BOARD_SIZE);
+		result.enpassantsq = Bitboard::cell(sqr(x, y));
 	}
 
 	{	fiftymoverule:
