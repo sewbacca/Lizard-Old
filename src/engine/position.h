@@ -29,4 +29,6 @@ public:
 	int piececount [PIECE_TYPES] {};
 
 	U64 hash();
+
+	void makeMove(Move);
 };

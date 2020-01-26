@@ -79,6 +79,8 @@ public:
 };
 
 bool is_inside(Square);
+Color swap(Color);
+constexpr Square sqr(int x, int y);
 
 // Enum operator
 
@@ -90,3 +92,9 @@ enum_bitwise_operator_invert(CastlingSide, int, CastlingSide::CS_ALL)
 enum_bitwise_operator_lhs(CastlingSide, |=, |)
 enum_bitwise_operator_lhs(CastlingSide, &=, &)
 enum_bitwise_operator_lhs(CastlingSide, ^=, ^)
+
+// Constexpr functions
+
+constexpr Square sqr(int x, int y) {
+	return y * BOARD_SIZE + x;
+}
