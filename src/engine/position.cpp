@@ -122,7 +122,6 @@ void Position::makeMove(Move move) {
 		set(pos_k + cs_dir * 1, rook);
 	}
 
-	if(side == BLACK)
-		hisply++;
+	hisply++;
 	side = swap(side);
 }

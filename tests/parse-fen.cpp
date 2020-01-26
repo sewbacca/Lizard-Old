@@ -55,7 +55,7 @@ TEST_CASE("Parse a fen correctly", "[fen]") {
 
 	// Meta
 
-	CHECK(result.hisply == 1);
+	CHECK(result.hisply == 0);
 	CHECK(result.fiftyply == 0);
 	CHECK(result.side == WHITE);
 	CHECK(result.rights == CS_ALL);

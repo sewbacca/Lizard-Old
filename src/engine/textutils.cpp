@@ -32,7 +32,7 @@ std::string to_string(Position p) {
 		stream << "--";
 	stream << "-\n";
 	
-	stream << "hisply: " << p.hisply << '\n';
+	stream << "hisply: " << (p.hisply / 2) << '\n';
 	stream << "fiftyply: " << p.fiftyply << '\n';
 	
 	stream << "rights: ";
@@ -185,7 +185,7 @@ Position load_fen(const char* fen) {
 	{	// Hisply
 		c = skipwhite(c);
 
-		result.hisply = atoi(c);
+		result.hisply = atoi(c) * 2 + (result.side == WHITE ? 0 : 1) - 2;
 	}
 
 	return result;

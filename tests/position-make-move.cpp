@@ -42,7 +42,7 @@ TEST_CASE("Make move en passant", "[position]") {
 	CHECK(pos.get(sq("e5")) == NO_PIECE);
 	CHECK(pos.get(sq("f6")) == WP);
 	CHECK(pos.get(sq("f5")) == NO_PIECE);
-	CHECK(pos.hisply == 3);
+	CHECK(pos.hisply == 5);
 	CHECK(pos.fiftyply == 0);
 	CHECK(pos.enpassantsq == 0);
 	CHECK(pos.side == BLACK);
@@ -63,7 +63,7 @@ TEST_CASE("Make move promotion", "[position]") {
 	CHECK(pos.get(sq("f7")) == NO_PIECE);
 	CHECK(pos.get(sq("g8")) == WQ);
 	CHECK(pos.fiftyply == 0);
-	CHECK(pos.hisply == 5);
+	CHECK(pos.hisply == 9);
 	CHECK(pos.enpassantsq == 0);
 	CHECK(pos.side == BLACK);
 }
@@ -86,7 +86,7 @@ TEST_CASE("Make move destroy castling", "[position]") {
 		CHECK(pos.get(sq("e7")) == BK);
 		CHECK(pos.fiftyply == 1);
 		CHECK(pos.rights == CS_WHITE);
-		CHECK(pos.hisply == 7);
+		CHECK(pos.hisply == 12);
 	}
 
 	SECTION("with a-rook") {
@@ -102,7 +102,7 @@ TEST_CASE("Make move destroy castling", "[position]") {
 		CHECK(pos.get(sq("a7")) == BR);
 		CHECK(pos.fiftyply == 1);
 		CHECK(pos.rights == (CS_ALL & ~B_OO));
-		CHECK(pos.hisply == 7);
+		CHECK(pos.hisply == 12);
 	}
 
 	SECTION("with h-rook") {
@@ -118,7 +118,7 @@ TEST_CASE("Make move destroy castling", "[position]") {
 		CHECK(pos.get(sq("h7")) == BR);
 		CHECK(pos.fiftyply == 1);
 		CHECK(pos.rights == (CS_ALL & ~B_OOO));
-		CHECK(pos.hisply == 7);
+		CHECK(pos.hisply == 12);
 	}
 }
 
