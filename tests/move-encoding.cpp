@@ -5,6 +5,7 @@
 TEST_CASE("Move encoding", "[Move]") {
 	Move move;
 
+	move.setPiece(WQ);
 	move.setCapture(WP);
 	move.setCastling(W_OO);
 	move.setPromotion(WK);
@@ -16,6 +17,7 @@ TEST_CASE("Move encoding", "[Move]") {
 	CHECK(move.capture() == WP);
 	CHECK(move.castling() == W_OO);
 	CHECK(move.promotion() == WK);
+	CHECK(move.piece() == WQ);
 	CHECK(move.isEnPassant() == true);
 	CHECK(move.from() == 56);
 	CHECK(move.to() == 12);

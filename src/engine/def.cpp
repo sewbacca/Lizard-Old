@@ -4,34 +4,35 @@ bool is_inside(Square Square) {
 	return Square >= 0 && Square < SQUARE_COUNT;
 }
 
-/* Move */
-
 /* Move representation
-	0000 0000 0000 0000 0000 0011 1111 -> From
-	0000 0000 0000 0000 1111 1100 0000 -> To
-	0000 0000 0000 1111 0000 0000 0000 -> Prom
-	0000 0000 1111 0000 0000 0000 0000 -> Captured
-	0000 Flags:
-	0000 0001 0000 0000 0000 0000 0000 -> EP
-	0000 0010 0000 0000 0000 0000 0000 -> Double pawn push
-	0011 1100 0000 0000 0000 0000 0000 -> Castle
+	0000 0000 0000 0000 0000 0000 0011 1111 -> From
+	0000 0000 0000 0000 0000 1111 1100 0000 -> To
+	0000 0000 0000 0000 1111 0000 0000 0000 -> Prom
+	0000 0000 0000 1111 0000 0000 0000 0000 -> Moving
+	0000 0000 1111 0000 0000 0000 0000 0000 -> Captured
+	Flags:
+	0000 0001 0000 0000 0000 0000 0000 0000 -> EP
+	0000 0010 0000 0000 0000 0000 0000 0000 -> Double pawn push
+	0011 1100 0000 0000 0000 0000 0000 0000 -> Castle
 */
 
-static constexpr int MASK_FROM 		= 0b0000'0000'0000'0000'0000'0011'1111;
-static constexpr int MASK_TO 		= 0b0000'0000'0000'0000'1111'1100'0000;
-static constexpr int MASK_PROM 		= 0b0000'0000'0000'1111'0000'0000'0000;
-static constexpr int MASK_CAP 		= 0b0000'0000'1111'0000'0000'0000'0000;
-static constexpr int MASK_EP 		= 0b0000'0001'0000'0000'0000'0000'0000;
-static constexpr int MASK_DPP 		= 0b0000'0010'0000'0000'0000'0000'0000;
-static constexpr int MASK_CASTLING 	= 0b0011'1100'0000'0000'0000'0000'0000;
+static constexpr int MASK_FROM 		= 0b0000'0000'0000'0000'0000'0000'0011'1111;
+static constexpr int MASK_TO 		= 0b0000'0000'0000'0000'0000'1111'1100'0000;
+static constexpr int MASK_PROM 		= 0b0000'0000'0000'0000'1111'0000'0000'0000;
+static constexpr int MASK_MOV 		= 0b0000'0000'0000'1111'0000'0000'0000'0000;
+static constexpr int MASK_CAP 		= 0b0000'0000'1111'0000'0000'0000'0000'0000;
+static constexpr int MASK_EP 		= 0b0000'0001'0000'0000'0000'0000'0000'0000;
+static constexpr int MASK_DPP 		= 0b0000'0010'0000'0000'0000'0000'0000'0000;
+static constexpr int MASK_CASTLING 	= 0b0011'1100'0000'0000'0000'0000'0000'0000;
 
 static constexpr int OFF_FROM		= 0;
 static constexpr int OFF_TO		= 6;
 static constexpr int OFF_PROM		= 12;
-static constexpr int OFF_CAP		= 16;
-static constexpr int OFF_EP		= 20;
-static constexpr int OFF_DPP		= 21;
-static constexpr int OFF_CASTLING	= 22;
+static constexpr int OFF_MOV		= 16;
+static constexpr int OFF_CAP		= 20;
+static constexpr int OFF_EP		= 24;
+static constexpr int OFF_DPP		= 25;
+static constexpr int OFF_CASTLING	= 26;
 
 // Getter
 
@@ -45,6 +46,10 @@ Square Move::to() {
 
 Piece Move::promotion() {
 	return Piece((move & MASK_PROM) >> OFF_PROM);
+}
+
+Piece Move::piece() {
+	return Piece((move & MASK_MOV) >> OFF_MOV);
 }
 
 Piece Move::capture() {
@@ -79,6 +84,11 @@ void Move::setTo(Square Square) {
 void Move::setPromotion(Piece p) {
 	move &= ~MASK_PROM;
 	move |= p << OFF_PROM;
+}
+
+void Move::setPiece(Piece p) {
+	move &= ~MASK_MOV;
+	move |= p << OFF_MOV;
 }
 
 void Move::setCapture(Piece p) {

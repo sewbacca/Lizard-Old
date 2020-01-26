@@ -44,21 +44,22 @@ enum CastlingSide
 
 class Move {
 private:
-	
 	/* Move representation
-		0000 0000 0000 0000 0000 0011 1111 -> From
-		0000 0000 0000 0000 1111 1100 0000 -> To
-		0000 0000 0000 1111 0000 0000 0000 -> Prom
-		0000 0000 1111 0000 0000 0000 0000 -> Captured
-		0000 Flags:
-		0000 0001 0000 0000 0000 0000 0000 -> EP
-		0000 0010 0000 0000 0000 0000 0000 -> Double pawn push
-		0011 1100 0000 0000 0000 0000 0000 -> Castle
+		0000 0000 0000 0000 0000 0000 0011 1111 -> From
+		0000 0000 0000 0000 0000 1111 1100 0000 -> To
+		0000 0000 0000 0000 1111 0000 0000 0000 -> Prom
+		0000 0000 0000 1111 0000 0000 0000 0000 -> Moving
+		0000 0000 1111 0000 0000 0000 0000 0000 -> Captured
+		Flags:
+		0000 0001 0000 0000 0000 0000 0000 0000 -> EP
+		0000 0010 0000 0000 0000 0000 0000 0000 -> Double pawn push
+		0011 1100 0000 0000 0000 0000 0000 0000 -> Castle
 	*/
 	int move = 0;
 public:
 	Square from();
 	Square to();
+	Piece piece();
 	Piece capture();
 	Piece promotion();
 	CastlingSide castling();
@@ -69,6 +70,7 @@ public:
 	void setFrom(Square);
 	void setTo(Square);
 	void setCapture(Piece);
+	void setPiece(Piece);
 	void setPromotion(Piece);
 	void setCastling(CastlingSide);
 
