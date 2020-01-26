@@ -3,27 +3,27 @@
 
 #include "bitboard.h"
 
-bitboard Bitboard::cell(int x, int y) {
-	assert(is_inside(x, y));
+bitboard Bitboard::cell(Square Square) {
+	assert(is_inside(Square));
 
-	return 1ULL << (y * BOARD_SIZE + x);
+	return 1ULL << Square;
 }
 
-bool Bitboard::is_set(bitboard board, int x, int y) {
-	assert(is_inside(x, y));
+bool Bitboard::is_set(bitboard board, Square Square) {
+	assert(is_inside(Square));
 
-	return board & cell(x, y);
+	return board & cell(Square);
 }
 
 bool Bitboard::is_single(bitboard n) {
 	return n && (!(n & (n - 1))); 
 }
 
-int Bitboard::index(bitboard board) {
+Square Bitboard::index(bitboard board) {
 	if(!is_single(board))
 		return -1;
 	
-	int index = 0;
+	Square index = 0;
 	while(board != 0) {
 		board -= 1ULL << index;
 		index++;

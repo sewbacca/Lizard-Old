@@ -8,9 +8,11 @@
 
 typedef uint64_t U64;
 typedef uint64_t bitboard;
+typedef int Square;
 
 constexpr int MAX_PIECES = 10;
 constexpr int BOARD_SIZE = 8;
+constexpr int SQUARE_COUNT = BOARD_SIZE * BOARD_SIZE;
 constexpr int PIECE_TYPES = 12;
 
 enum Piece
@@ -40,13 +42,6 @@ enum CastlingSide
 	NO_CASTLING =	0
 };
 
-struct Point {
-	int x = 0, y = 0;
-	Point(int x, int y) : x{x}, y{y} { };
-	Point(int index) : Point(index % BOARD_SIZE, index / BOARD_SIZE) { }
-	Point() { }
-};
-
 class Move {
 private:
 	
@@ -62,8 +57,8 @@ private:
 	*/
 	int move = 0;
 public:
-	Point from();
-	Point to();
+	Square from();
+	Square to();
 	Piece capture();
 	Piece promotion();
 	CastlingSide castling();
@@ -71,8 +66,8 @@ public:
 	bool isDoublePawnPush();
 	bool isEnPassant();
 
-	void setFrom(Point);
-	void setTo(Point);
+	void setFrom(Square);
+	void setTo(Square);
 	void setCapture(Piece);
 	void setPromotion(Piece);
 	void setCastling(CastlingSide);
@@ -81,7 +76,7 @@ public:
 	void flagEnPassant(bool);
 };
 
-bool is_inside(int x, int y);
+bool is_inside(Square);
 
 // Enum operator
 

@@ -15,7 +15,7 @@
 U64 castling[32];
 U64 black;
 U64 enpassant[BOARD_SIZE];
-U64 piece[PIECE_TYPES][BOARD_SIZE][BOARD_SIZE];
+U64 piece[PIECE_TYPES][SQUARE_COUNT];
 
 void init_hash() {
 	for(int i = 0; i < 32; i++) {
@@ -29,10 +29,8 @@ void init_hash() {
 	}
 
 	for(int p = 0; p < PIECE_TYPES + 1; p++) {
-		for(int x = 0; x < BOARD_SIZE; x++) {
-			for(int y = 0; y < BOARD_SIZE; y++) {
-				piece[p][x][y] = RAND64;
-			}
+		for(int i = 0; i < SQUARE_COUNT; i++) {
+			piece[p][i] = RAND64;
 		}
 	}
 }
@@ -45,13 +43,13 @@ U64 get_hash(Color color) {
 	return 0;
 }
 
-U64 get_hash(int x, int y, Piece p) {
-	assert(is_inside(x, y));
+U64 get_hash(Square sq, Piece p) {
+	assert(is_inside(sq));
 
 	if(p == NO_PIECE)
 		return 0;
 
-	return piece[p][x][y];
+	return piece[p][sq];
 }
 
 U64 get_hash(CastlingSide rights) {

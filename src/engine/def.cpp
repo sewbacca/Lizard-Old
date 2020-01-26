@@ -1,7 +1,7 @@
 #include "def.h"
 
-bool is_inside(int x, int y) {
-	return x >= 0 && y >= 0 && x < BOARD_SIZE && y < BOARD_SIZE;
+bool is_inside(Square Square) {
+	return Square >= 0 && Square < SQUARE_COUNT;
 }
 
 /* Move */
@@ -35,12 +35,12 @@ static constexpr int OFF_CASTLING	= 22;
 
 // Getter
 
-Point Move::from() {
-	return Point((move & MASK_FROM) << OFF_FROM);
+Square Move::from() {
+	return Square((move & MASK_FROM) << OFF_FROM);
 }
 
-Point Move::to() {
-	return Point((move & MASK_TO) >> OFF_TO);
+Square Move::to() {
+	return Square((move & MASK_TO) >> OFF_TO);
 }
 
 Piece Move::promotion() {
@@ -66,14 +66,14 @@ bool Move::isDoublePawnPush() {
 
 // Setter
 
-void Move::setFrom(Point p) {
+void Move::setFrom(Square Square) {
 	move &= ~MASK_FROM;
-	move |= (p.y * BOARD_SIZE + p.x) << OFF_FROM;
+	move |= Square << OFF_FROM;
 }
 
-void Move::setTo(Point p) {
+void Move::setTo(Square Square) {
 	move &= ~MASK_TO;
-	move |= (p.y * BOARD_SIZE + p.x) << OFF_TO;
+	move |= Square << OFF_TO;
 }
 
 void Move::setPromotion(Piece p) {

@@ -8,11 +8,11 @@ TEST_CASE("Position hashing", "[posistion] [hash]") {
 
 	CHECK(pos1.hash() == pos2.hash());
 
-	pos1.set(0, 0, NO_PIECE);
+	pos1.set(0, NO_PIECE);
 
 	CHECK(pos1.hash() != pos2.hash());
 
-	pos2.set(0, 0, NO_PIECE);
+	pos2.set(0, NO_PIECE);
 
 	CHECK(pos1.hash() == pos2.hash());
 
@@ -21,11 +21,11 @@ TEST_CASE("Position hashing", "[posistion] [hash]") {
 	CHECK(pos1.hash() != pos2.hash());
 
 	pos2.side = BLACK;
-	pos2.set(0, 0, WR);
+	pos2.set(0, WR);
 
 	CHECK(pos1.hash() != pos2.hash());
 
-	pos1.set(0, 0, WR);
+	pos1.set(0, WR);
 
 	CHECK(pos1.hash() == pos2.hash());
 }

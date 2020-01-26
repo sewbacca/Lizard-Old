@@ -22,10 +22,10 @@ public:
 	int hisply = 0;
 	int ply = 0;
 
-	void set(int x, int y, Piece);
-	Piece get(int x, int y);
+	void set(Square, Piece);
+	Piece get(Square);
 
-	Point pieces[PIECE_TYPES][MAX_PIECES];
+	Square pieces[PIECE_TYPES][MAX_PIECES];
 	int piececount [PIECE_TYPES] {};
 
 	U64 hash();

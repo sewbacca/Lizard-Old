@@ -9,16 +9,14 @@ TEST_CASE("Move encoding", "[Move]") {
 	move.setCastling(W_OO);
 	move.setPromotion(WK);
 	move.flagEnPassant(true);
-	move.setFrom(Point(0, 2));
-	move.setTo(Point(4, 5));
+	move.setFrom(56);
+	move.setTo(12);
 	move.flagDoublePawnPush(false);
 
 	CHECK(move.capture() == WP);
 	CHECK(move.castling() == W_OO);
 	CHECK(move.promotion() == WK);
 	CHECK(move.isEnPassant() == true);
-	CHECK(move.from().x == 0);
-	CHECK(move.from().y == 2);
-	CHECK(move.to().x == 4);
-	CHECK(move.to().y == 5);
+	CHECK(move.from() == 56);
+	CHECK(move.to() == 12);
 }
