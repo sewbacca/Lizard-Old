@@ -12,13 +12,13 @@
         )
 
 
-U64 castling[32];
+U64 castling[16];
 U64 black;
 U64 enpassant[BOARD_SIZE];
 U64 piece[PIECE_TYPES][SQUARE_COUNT];
 
 void init_hash() {
-	for(int i = 0; i < 32; i++) {
+	for(int i = 0; i < 16; i++) {
 		castling[i] = RAND64;
 	}
 
@@ -53,6 +53,8 @@ U64 get_hash(Square sq, Piece p) {
 }
 
 U64 get_hash(CastlingSide rights) {
+	assert(rights >= 0 && rights < 16);
+
 	return castling[rights];
 }
 
