@@ -18,6 +18,18 @@
 		"string_view": "cpp",
 		"system_error": "cpp",
 		"thread": "cpp",
-		"variant": "cpp"
+		"variant": "cpp",
+		"set": "cpp",
+		"random": "cpp",
+		"fstream": "cpp",
+		"future": "cpp",
+		"istream": "cpp",
+		"limits": "cpp",
+		"ostream": "cpp",
+		"sstream": "cpp",
+		"streambuf": "cpp",
+		"regex": "cpp",
+		"tuple": "cpp",
+		"condition_variable": "cpp"
 	},
 }
