@@ -38,6 +38,14 @@ static constexpr int OFF_EP		= 24;
 static constexpr int OFF_DPP		= 25;
 static constexpr int OFF_CASTLING	= 26;
 
+// Standard constructor
+
+Move::Move() {
+	setCapture(NO_PIECE);
+	setPiece(NO_PIECE);
+	setPromotion(NO_PIECE);
+}
+
 // Getter
 
 Square Move::from() {

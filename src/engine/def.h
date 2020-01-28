@@ -76,6 +76,10 @@ public:
 
 	void flagDoublePawnPush(bool);
 	void flagEnPassant(bool);
+
+	Move();
+
+	friend class UndoMove;
 };
 
 bool is_inside(Square);
