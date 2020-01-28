@@ -10,6 +10,7 @@ typedef uint64_t U64;
 typedef uint64_t bitboard;
 typedef int Square;
 
+constexpr int MAX_HISTORY = 2048;
 constexpr int MAX_PIECES = 10;
 constexpr int BOARD_SIZE = 8;
 constexpr int SQUARE_COUNT = BOARD_SIZE * BOARD_SIZE;
@@ -43,7 +44,7 @@ enum CastlingSide
 };
 
 class Move {
-private:
+protected:
 	/* Move representation
 		0000 0000 0000 0000 0000 0000 0011 1111 -> From
 		0000 0000 0000 0000 0000 1111 1100 0000 -> To

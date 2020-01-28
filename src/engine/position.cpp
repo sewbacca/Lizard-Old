@@ -67,16 +67,20 @@ constexpr Square POS_WK = sqr(4, 0);
 constexpr Square POS_BK = sqr(4, 7);
 
 void Position::makeMove(Move move) {
-	CastlingSide castling = move.castling();
+	// Store for restore
+	history[hisply] = UndoMove(move);
+	history[hisply].before_enpassantsq = enpassantsq;
+	history[hisply].before_rights = rights;
+	history[hisply].before_fiftyply = fiftyply;
 
 	Piece rook = side == WHITE ? WR : BR;
 	Piece king = side == WHITE ? WK : BK;
 
+	// May be resetted
 	enpassantsq = 0;
-
 	fiftyply++;
 
-	if(castling == NO_CASTLING) {
+	if(move.castling() == NO_CASTLING) {
 		int p_dir = side == WHITE ? 1 : -1;
 		Piece pawn = side == WHITE ? WP : BP;
 
@@ -110,11 +114,11 @@ void Position::makeMove(Move move) {
 	} else {
 		Square pos_k = side == WHITE ? POS_WK : POS_BK;
 		Square pos_r = sqr(
-			castling & QUEEN_SIDE ? 0 : 7,
+			move.castling() & QUEEN_SIDE ? 0 : 7,
 			side == WHITE ? 0 : 7
 		);
 		
-		int cs_dir = castling & KING_SIDE ? 1 : -1;
+		int cs_dir = move.castling() & KING_SIDE ? 1 : -1;
 
 		set(pos_r, NO_PIECE);
 		set(pos_k, NO_PIECE);
@@ -124,4 +128,45 @@ void Position::makeMove(Move move) {
 
 	hisply++;
 	side = swap(side);
+}
+
+
+void Position::undoMove() {
+	assert(hisply > 0);
+	
+	side = swap(side);
+
+	UndoMove undomove = history[--hisply];
+
+	Piece rook = side == WHITE ? WR : BR;
+	Piece king = side == WHITE ? WK : BK;
+
+	if(undomove.castling() == NO_CASTLING) {
+		int p_dir = side == WHITE ? 1 : -1;
+		
+		set(undomove.from(), undomove.piece());
+		
+		if (undomove.isEnPassant()) {
+			set(undomove.to() - p_dir * 8, undomove.capture());
+			set(undomove.to(), NO_PIECE);
+		} else
+			set(undomove.to(), undomove.capture());
+	} else {
+		Square pos_k = side == WHITE ? POS_WK : POS_BK;
+		Square pos_r = sqr(
+			undomove.castling() & QUEEN_SIDE ? 0 : 7,
+			side == WHITE ? 0 : 7
+		);
+		
+		int cs_dir = undomove.castling() & KING_SIDE ? 1 : -1;
+
+		set(pos_r, rook);
+		set(pos_k, king);
+		set(pos_k + cs_dir * 2, NO_PIECE);
+		set(pos_k + cs_dir * 1, NO_PIECE);
+	}
+
+	fiftyply = undomove.before_fiftyply;
+	rights = undomove.before_rights;
+	enpassantsq = undomove.before_enpassantsq;
 }

@@ -3,6 +3,16 @@
 
 #include "def.h"
 
+class UndoMove : public Move {
+public:
+	CastlingSide before_rights = NO_CASTLING;
+	bitboard before_enpassantsq = 0;
+	int before_fiftyply = 0;
+
+	UndoMove(Move move) { this->move = move.move; }
+	UndoMove() { }
+};
+
 class Position
 {
 private:
@@ -13,6 +23,8 @@ private:
 	bitboard* board() { return &wp; }
 
 	U64 m_hash {0};
+
+	UndoMove history[MAX_HISTORY];
 public:
 	Color side = WHITE;
 	CastlingSide rights = NO_CASTLING;
@@ -31,4 +43,5 @@ public:
 	U64 hash();
 
 	void makeMove(Move);
+	void undoMove();
 };
