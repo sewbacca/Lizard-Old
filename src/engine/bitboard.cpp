@@ -24,8 +24,8 @@ Square Bitboard::index(bitboard board) {
 		return -1;
 	
 	Square index = 0;
-	while(board != 0) {
-		board -= 1ULL << index;
+	while((board & (1ULL << index)) == 0) {
+		assert(index >= 0 && index < SQUARE_COUNT);
 		index++;
 	}
 
