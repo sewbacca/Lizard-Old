@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <cstdlib>
 
-std::string to_string(Position p) {
+std::string to_string(const Position& p) {
 	std::stringstream stream;
 
 	static const char PIECES[] = {
@@ -24,7 +24,7 @@ std::string to_string(Position p) {
 
 	for(int y = BOARD_SIZE - 1; y >= 0; y--) {
 		for(int x = 0; x < BOARD_SIZE; x++)
-			stream << '|' << PIECES[p.get(sqr(x, y))];
+			stream << '|' << PIECES[p.get(idx(x, y))];
 		stream  << "|\n";
 	}
 
@@ -46,7 +46,7 @@ std::string to_string(Position p) {
 		stream << 'q';
 	stream << '\n';
 
-	int index = Bitboard::index(p.enpassantsq);
+	int index = lsb(p.enpassantsq);
 
 	stream << "en pas: ";
 	if(index != -1) {
@@ -115,7 +115,7 @@ Position load_fen(const char* fen) {
 						assert(false);
 				}
 
-				result.set(sqr(x, y), p);
+				result.set(idx(x, y), p);
 				x++;
 			}
 
@@ -173,7 +173,7 @@ Position load_fen(const char* fen) {
 		int x = *c - 'a'; c++;
 		int y = *c - '1';
 
-		result.enpassantsq = Bitboard::cell(sqr(x, y));
+		result.enpassantsq = cell(idx(x, y));
 	}
 
 	{	fiftymoverule:

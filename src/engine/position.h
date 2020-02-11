@@ -19,9 +19,6 @@ private:
 	bitboard wp{0}, wn{0}, wb{0}, wr{0}, wq{0}, wk{0};
 	bitboard bp{0}, bn{0}, bb{0}, br{0}, bq{0}, bk{0};
 
-	// Board representation
-	bitboard* board() { return &wp; }
-
 	U64 m_hash {0};
 
 	UndoMove history[MAX_HISTORY];
@@ -34,13 +31,17 @@ public:
 	int hisply = 0;
 	int ply = 0;
 
-	void set(Square, Piece);
-	Piece get(Square);
+	bitboard* board() { return &wp; }
+	const bitboard* board() const { return &wp; }
+	bitboard pieces() const { return wp | wn | wb | wr | wq | wk | bp | bn | bb | br | bq | bk; }
 
-	Square pieces[PIECE_TYPES][MAX_PIECES];
+	void set(Square, Piece);
+	Piece get(Square) const;
+
+	Square piecepos[PIECE_TYPES][MAX_PIECES];
 	int piececount [PIECE_TYPES] {};
 
-	U64 hash();
+	U64 hash() const;
 
 	void makeMove(Move);
 	void undoMove();

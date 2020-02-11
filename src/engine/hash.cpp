@@ -28,7 +28,7 @@ void init_hash() {
 		enpassant[i] = RAND64;
 	}
 
-	for(int p = 0; p < PIECE_TYPES + 1; p++) {
+	for(Piece p = WP; p < PIECE_TYPES + 1; ++p) {
 		for(int i = 0; i < SQUARE_COUNT; i++) {
 			piece[p][i] = RAND64;
 		}

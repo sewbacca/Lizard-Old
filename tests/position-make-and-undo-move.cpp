@@ -27,7 +27,7 @@ TEST_CASE("Make move double jump", "[position]") {
 	CHECK(start.get(sq("e4")) == WP);
 	CHECK(start.hisply == 1);
 	CHECK(start.fiftyply == 0);
-	CHECK(start.enpassantsq == Bitboard::cell(20));
+	CHECK(start.enpassantsq == cell(20));
 	CHECK(start.side == BLACK);
 
 	start.undoMove();

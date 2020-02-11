@@ -85,21 +85,34 @@ public:
 
 bool is_inside(Square);
 Color swap(Color);
-constexpr Square sqr(int x, int y);
+constexpr Square idx(int x, int y);
 
-// Enum operator
+// Bitwise operator for CastlingSide
 
-enum_bitwise_operator_rhs(CastlingSide, int, |)
-enum_bitwise_operator_rhs(CastlingSide, int, &)
-enum_bitwise_operator_rhs(CastlingSide, int, ^)
+enum_operator_rhs(CastlingSide, int, |)
+enum_operator_rhs(CastlingSide, int, &)
+enum_operator_rhs(CastlingSide, int, ^)
 enum_bitwise_operator_invert(CastlingSide, int, CastlingSide::CS_ALL)
 
-enum_bitwise_operator_lhs(CastlingSide, |=, |)
-enum_bitwise_operator_lhs(CastlingSide, &=, &)
-enum_bitwise_operator_lhs(CastlingSide, ^=, ^)
+enum_operator_lhs(CastlingSide, |=, |)
+enum_operator_lhs(CastlingSide, &=, &)
+enum_operator_lhs(CastlingSide, ^=, ^)
+
+// Numeric operator for Piece
+
+enum_operator_rhs(Piece, int, +)
+enum_operator_rhs(Piece, int, -)
+
+enum_operator_lhs(Piece, +=, +)
+enum_operator_lhs(Piece, -=, -)
+
+enum_prefix_operator(Piece, ++, +)
+enum_postfix_operator(Piece, ++, +)
+enum_prefix_operator(Piece, --, -)
+enum_postfix_operator(Piece, --, -)
 
 // Constexpr functions
 
-constexpr Square sqr(int x, int y) {
+constexpr Square idx(int x, int y) {
 	return y * BOARD_SIZE + x;
 }

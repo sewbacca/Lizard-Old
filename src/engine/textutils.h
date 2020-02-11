@@ -5,4 +5,4 @@
 #include "position.h"
 
 Position load_fen(const char* fen);
-std::string to_string(Position);
+std::string to_string(const Position& p);
