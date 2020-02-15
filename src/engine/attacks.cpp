@@ -41,6 +41,22 @@ bitboard attacks_q(Square sq, bitboard occupied) {
 	return attacks_b(sq, occupied) | attacks_r(sq, occupied);
 }
 
+bool is_attacked(Square sq, Color attacker, const Position& pos) {
+	bitboard all = pos.pieces();
+
+	bitboard dia = pos.pieces(attacker, QUEEN) | pos.pieces(attacker, BISHOP);
+	bitboard hv = pos.pieces(attacker, QUEEN) | pos.pieces(attacker, ROOK);
+	bitboard knights = pos.pieces(attacker, KNIGHT);
+	bitboard pawns = pos.pieces(attacker, PAWN);
+	bitboard kings = pos.pieces(attacker, KING);
+
+	return dia & attacks_b(sq, all) ||
+		hv & attacks_r(sq, all) ||
+		knights & attacks_n(sq) ||
+		pawns & defenders_p(sq, attacker) ||
+		kings & attacks_k(sq);
+}
+
 // Pre-calculating cache with attacks
 
 size_t init_attacks() {

@@ -26,8 +26,8 @@ enum Piece
 
 enum PieceType
 {
+	PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING,
 	NO_PIECE_TYPE,
-	PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
 };
 
 enum Color
@@ -98,6 +98,7 @@ constexpr int rank(Square);
 constexpr int file(Square);
 constexpr Color piece_col(Piece);
 constexpr PieceType piece_type(Piece);
+constexpr Piece combine(Color, PieceType);
 
 // Bitwise operator for CastlingSide
 
@@ -160,4 +161,9 @@ constexpr PieceType piece_type(Piece p) {
 	if (piece_col(p) == BLACK)
 		p -= BP;
 	return (PieceType) p;
+}
+
+constexpr Piece combine(Color col, PieceType p) {
+	Piece start = col == WHITE ? WP : BP;
+	return (Piece) (start + p);
 }

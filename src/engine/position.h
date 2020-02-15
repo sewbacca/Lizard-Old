@@ -35,8 +35,11 @@ public:
 	const bitboard* board() const { return &wp; }
 	bitboard wpieces() const { return wp | wn | wb | wr | wq | wk; }
 	bitboard bpieces() const { return bp | bn | bb | br | bq | bk; }
+
 	bitboard pieces() const { return wpieces() | bpieces(); }
+	bitboard pieces(Piece p) const { return *(&wp + p); }
 	bitboard pieces(Color c) const { return c == WHITE ? wpieces() : bpieces(); }
+	bitboard pieces(Color col, PieceType t) const { return pieces(combine(col, t)); }
 
 	void set(Square, Piece);
 	Piece get(Square) const;

@@ -13,3 +13,5 @@ bitboard attacks_k(Square);
 bitboard attacks_b(Square, bitboard occupied);
 bitboard attacks_r(Square, bitboard occupied);
 bitboard attacks_q(Square, bitboard occupied);
+
+bool is_attacked(Square sq, Color by, const Position&);
