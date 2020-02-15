@@ -3,7 +3,7 @@
 
 #include "def.h"
 
-void init_hash();
+size_t init_hash();
 
 U64 get_hash(Color);
 U64 get_hash(Square, Piece);

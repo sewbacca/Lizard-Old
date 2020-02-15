@@ -43,7 +43,7 @@ bitboard attacks_q(Square sq, bitboard occupied) {
 
 // Pre-calculating cache with attacks
 
-void init_attacks() {
+size_t init_attacks() {
 	auto offset = [](Square rel, int offX, int offY) -> bitboard {
 		int x = file(rel), y = rank(rel);
 		x += offX, y += offY;
@@ -102,5 +102,8 @@ void init_attacks() {
 
 	// Magic bitboard initialization
 
-	Magic::init_magic();
+	return Magic::init_magic() +
+		sizeof(KNIGHT_ATKS) +
+		sizeof(KING_ATKS) +
+		sizeof(PAWN_ATKS);
 }

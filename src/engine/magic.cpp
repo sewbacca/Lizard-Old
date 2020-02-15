@@ -106,10 +106,15 @@ static void init_cache(std::array<Vector2D, 4> deltas, Magic::MagicBitboard magi
 
 }
 
-void Magic::init_magic() {
+size_t Magic::init_magic() {
 	constexpr std::array<Vector2D, 4> D_ROOKS { NORTH, EAST, SOUTH, WEST };
 	constexpr std::array<Vector2D, 4> D_BISHOPS {NE, SE, SW, NW };
 
 	init_cache(D_ROOKS, MAGIC_ROOKS, ROOK_ATKS);
 	init_cache(D_BISHOPS, MAGIC_BISHOPS, BISHOP_ATKS);
+
+	return sizeof(ROOK_ATKS) +
+		sizeof(BISHOP_ATKS) +
+		sizeof(MAGIC_ROOKS) +
+		sizeof(MAGIC_BISHOPS);
 }

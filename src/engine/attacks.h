@@ -4,7 +4,7 @@
 #include "def.h"
 #include "position.h"
 
-void init_attacks();
+size_t init_attacks();
 
 bitboard attacks_p(Square sq, Color col);
 bitboard defenders_p(Square sq, Color col);

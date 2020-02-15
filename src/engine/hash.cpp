@@ -8,7 +8,7 @@ U64 black;
 U64 enpassant[BOARD_SIZE];
 U64 piece[PIECE_TYPES][SQUARE_COUNT];
 
-void init_hash() {
+size_t init_hash() {
 	for(int i = 0; i < 16; i++) {
 		castling[i] = rand64();
 	}
@@ -24,6 +24,11 @@ void init_hash() {
 			piece[p][i] = rand64();
 		}
 	}
+
+	return sizeof(castling) +
+		sizeof(black) +
+		sizeof(enpassant) +
+		sizeof(piece);
 }
 
 U64 get_hash(Color color) {
