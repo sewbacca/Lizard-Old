@@ -2,6 +2,7 @@
 #pragma once
 
 #include <cstdint>
+#include <cstdlib>
 #include "misc/enum_operator.h"
 
 #define startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -21,6 +22,12 @@ enum Piece
 	WP, WN, WB, WR, WQ, WK,
 	BP, BN, BB, BR, BQ, BK,
 	NO_PIECE
+};
+
+enum PieceType
+{
+	NO_PIECE_TYPE,
+	PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
 };
 
 enum Color
@@ -83,9 +90,14 @@ public:
 	friend class UndoMove;
 };
 
-bool is_inside(Square);
-Color swap(Color);
+constexpr bool is_inside(Square);
+constexpr bool is_inside(int x, int y);
+constexpr Color swap(Color);
 constexpr Square idx(int x, int y);
+constexpr int rank(Square);
+constexpr int file(Square);
+constexpr Color piece_col(Piece);
+constexpr PieceType piece_type(Piece);
 
 // Bitwise operator for CastlingSide
 
@@ -113,6 +125,39 @@ enum_postfix_operator(Piece, --, -)
 
 // Constexpr functions
 
+constexpr bool is_inside(Square sq) {
+	return sq >= 0 && sq < SQUARE_COUNT;
+}
+
+constexpr bool is_inside(int x, int y) {
+	return x >= 0 && x < BOARD_SIZE &&
+	y >= 0 && y < BOARD_SIZE;
+}
+
+constexpr Color swap(Color color) {
+	return color == WHITE ? BLACK : WHITE;
+}
+
 constexpr Square idx(int x, int y) {
 	return y * BOARD_SIZE + x;
+}
+
+constexpr int rank(Square sq) {
+	if(!is_inside(sq)) return -1;
+	return sq / BOARD_SIZE;
+}
+
+constexpr int file(Square sq) {
+	if(!is_inside(sq)) return -1;
+	return sq % BOARD_SIZE;
+}
+
+constexpr Color piece_col(Piece p) {
+	return p < BP ? WHITE : BLACK;
+}
+
+constexpr PieceType piece_type(Piece p) {
+	if (piece_col(p) == BLACK)
+		p -= BP;
+	return (PieceType) p;
 }

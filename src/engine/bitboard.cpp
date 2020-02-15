@@ -4,7 +4,7 @@
 #include "bitboard.h"
 
 bitboard cell(Square Square) {
-	assert(is_inside(Square));
+	if(!is_inside(Square)) return 0;
 
 	return 1ULL << Square;
 }
@@ -31,4 +31,15 @@ Square msb(bitboard board) {
 	if(!board)	return -1;
 
 	return 63 ^ __builtin_clzll(board);
+}
+
+Square pop_lsb(bitboard& board) {
+	Square sq = lsb(board);
+	board &= board - 1;
+
+	return sq;
+}
+
+int pop_count(bitboard board) {
+	return __builtin_popcountll(board);
 }

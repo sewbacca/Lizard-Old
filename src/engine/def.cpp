@@ -1,13 +1,4 @@
 #include "def.h"
-
-bool is_inside(Square Square) {
-	return Square >= 0 && Square < SQUARE_COUNT;
-}
-
-Color swap(Color color) {
-	return color == WHITE ? BLACK : WHITE;
-}
-
 /* Move representation
 	0000 0000 0000 0000 0000 0000 0011 1111 -> From
 	0000 0000 0000 0000 0000 1111 1100 0000 -> To

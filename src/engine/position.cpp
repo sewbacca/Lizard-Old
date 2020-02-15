@@ -9,7 +9,7 @@
 Piece Position::get(Square sq) const {
 	assert(is_inside(sq));
 
-	auto board = this->board();
+	const bitboard* board = this->board();
 	for(Piece p = WP; p < PIECE_TYPES; ++p) {
 		if(is_set(board[p], sq))
 			return p;

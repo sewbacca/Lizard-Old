@@ -5,4 +5,6 @@
 #include "position.h"
 
 Position load_fen(const char* fen);
-std::string to_string(const Position& p);
+// Debugging purpose
+std::string to_string(const Position&);
+std::string to_string(bitboard);

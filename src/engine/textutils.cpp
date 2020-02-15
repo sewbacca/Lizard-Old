@@ -190,3 +190,17 @@ Position load_fen(const char* fen) {
 
 	return result;
 }
+
+std::string to_string(bitboard board) {
+	std::string res = "";
+	res.reserve(BOARD_SIZE * BOARD_SIZE + BOARD_SIZE);
+
+	for(int y = BOARD_SIZE - 1; y >= 0; y--) {
+		for(int x = 0; x < BOARD_SIZE; x++) {
+			res += '0' + is_set(board, idx(x, y));
+		}
+		res += '\n';
+	}
+
+	return res;
+}

@@ -1,16 +1,7 @@
 #include <cassert>
 
 #include "hash.h"
-#include <cstdlib>
-
-#define RAND64 (\
-            static_cast<U64>(std::rand()) +\
-            (static_cast<U64>(std::rand()) << 15) +\
-            (static_cast<U64>(std::rand()) << 30) +\
-            (static_cast<U64>(std::rand()) << 45) +\
-            (static_cast<U64>(std::rand() & 0xf) << 60)\
-        )
-
+#include "rand64.h"
 
 U64 castling[16];
 U64 black;
@@ -19,18 +10,18 @@ U64 piece[PIECE_TYPES][SQUARE_COUNT];
 
 void init_hash() {
 	for(int i = 0; i < 16; i++) {
-		castling[i] = RAND64;
+		castling[i] = rand64();
 	}
 
-	black = RAND64;
+	black = rand64();
 
 	for(int i = 0; i < BOARD_SIZE; i++) {
-		enpassant[i] = RAND64;
+		enpassant[i] = rand64();
 	}
 
 	for(Piece p = WP; p < PIECE_TYPES + 1; ++p) {
 		for(int i = 0; i < SQUARE_COUNT; i++) {
-			piece[p][i] = RAND64;
+			piece[p][i] = rand64();
 		}
 	}
 }

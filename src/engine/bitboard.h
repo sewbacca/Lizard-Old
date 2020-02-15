@@ -10,3 +10,5 @@ bitboard cell(Square Square);
 Square lsb(bitboard board);
 // Returns the most significant bit
 Square msb(bitboard board);
+Square pop_lsb(bitboard& board);
+int pop_count(bitboard board);
