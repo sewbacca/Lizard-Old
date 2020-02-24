@@ -57,6 +57,16 @@ bool is_attacked(Square sq, Color attacker, const Position& pos) {
 		kings & attacks_k(sq);
 }
 
+bool is_in_check(const Position& pos, Color side) {
+	Piece king = combine(side, KING);
+	for(int i = 0; i < pos.piececount[king]; i++) {
+		if(is_attacked(pos.piecepos[king][i], swap(side), pos))
+			return true;
+	}
+
+	return false;
+}
+
 // Pre-calculating cache with attacks
 
 size_t init_attacks() {

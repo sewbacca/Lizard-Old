@@ -1,10 +1,12 @@
 
 #include <cassert>
 #include <algorithm>
+#include <iostream>
 
 #include "position.h"
 #include "bitboard.h"
 #include "hash.h"
+#include "textutils.h"
 
 Piece Position::get(Square sq) const {
 	assert(is_inside(sq));
@@ -87,15 +89,17 @@ void Position::makeMove(Move move) {
 		Piece piece = move.piece();
 
 		if(piece == rook) {
+			// Remove permission if rook was moved
 			CastlingSide OO = side == WHITE ? W_OO : B_OO;
 			CastlingSide OOO = side == WHITE ? W_OOO : B_OOO;
 
-			if(move.from() % BOARD_SIZE == 0) {
+			if(file(move.from()) == 7) {
 				rights &= ~OO;
-			} else if (move.from() % BOARD_SIZE == 7) {
+			} else if (move.from() % BOARD_SIZE == 0) {
 				rights &= ~OOO;
 			}
 		} else if (piece == pawn) {
+			// Pawn extra movement
 			if(move.isDoublePawnPush()) {
 				enpassantsq = cell(move.to() - p_dir * 8);
 			} else if (move.isEnPassant()) {
@@ -108,6 +112,18 @@ void Position::makeMove(Move move) {
 		} else if (piece == king) {
 			rights &= ~(side == WHITE ? CS_WHITE : CS_BLACK);
 		}
+
+		// Remove permission if rook was captured
+		if(rank(move.to()) == (side == WHITE ? 7 : 0) && piece_type(move.capture()) == ROOK) {
+			if(file(move.to()) == 7) {
+				CastlingSide OO = side == WHITE ? B_OO : W_OO;
+				rights &= ~OO;
+			} else if(file(move.to()) == 0) {
+				CastlingSide OOO = side == WHITE ? B_OOO : W_OOO;
+				rights &= ~OOO;
+			}
+		}
+
 
 		set(move.from(), NO_PIECE);
 		set(move.to(), piece);

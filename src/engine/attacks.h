@@ -15,3 +15,4 @@ bitboard attacks_r(Square, bitboard occupied);
 bitboard attacks_q(Square, bitboard occupied);
 
 bool is_attacked(Square sq, Color by, const Position&);
+bool is_in_check(const Position&, Color side);

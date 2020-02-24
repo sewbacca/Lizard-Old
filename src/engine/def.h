@@ -11,6 +11,7 @@ typedef uint64_t U64;
 typedef uint64_t bitboard;
 typedef int Square;
 
+constexpr int MAX_MOVES = 512;
 constexpr int MAX_HISTORY = 2048;
 constexpr int MAX_PIECES = 10;
 constexpr int BOARD_SIZE = 8;

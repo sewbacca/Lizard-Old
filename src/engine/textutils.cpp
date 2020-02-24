@@ -1,10 +1,12 @@
 
 #include "textutils.h"
 #include "bitboard.h"
+#include "bitboard_constants.h"
 
 #include <sstream>
 
 #include <cassert>
+#include <cmath>
 #include <cstring>
 #include <ctype.h>
 #include <cstdlib>
@@ -203,4 +205,98 @@ std::string to_string(bitboard board) {
 	}
 
 	return res;
+}
+
+static std::string field(Square sq) {
+	std::string field = "  ";
+	field[0] = 'a' + file(sq);
+	field[1] = '1' + rank(sq);
+	return field;
+}
+
+std::string to_string(Move move) {
+	const char PIECES[] = {
+		'P',
+		'N',
+		'B',
+		'R',
+		'Q',
+		'K',
+	};
+
+	std::string readable = "";
+	readable.reserve(6);
+	
+	readable += PIECES[piece_type(move.piece())];
+	readable += field(move.from());
+
+	if(move.capture() != NO_PIECE) {
+		readable += 'x';
+		readable += PIECES[piece_type(move.capture())];
+	}
+
+	readable += field(move.to());
+
+	return readable;
+}
+
+// Uci protocol
+
+std::string to_uci(Move move) {
+	return field(move.from()) + field(move.to());
+}
+
+Square field(char collumn, char row) {
+	return idx(collumn - 'a', row - '1');
+}
+
+PieceType to_piece_type(char piece_type) {
+	piece_type = tolower(piece_type);
+	switch (piece_type)
+	{
+	case 'p':
+		return PAWN;
+	case 'n':
+		return KNIGHT;
+	case 'b':
+		return BISHOP;
+	case 'r':
+		return ROOK;
+	case 'q':
+		return QUEEN;
+	case 'k':
+		return KING;
+	default:
+		break;
+	}
+	return NO_PIECE_TYPE;
+}
+
+Move from_uci(std::string move, const Position& pos) {
+	assert(move.size() >= 4);
+	Square from = field(move[0], move[1]);
+	Square to = field(move[2], move[3]);
+	Piece promotion = NO_PIECE;
+
+	if(move.size() > 4)
+		promotion = combine(pos.side, to_piece_type(move[5]));
+
+	Move result;
+	result.setFrom(from);
+	result.setTo(to);
+	result.setPromotion(promotion);
+	Piece piece = pos.get(from);
+	result.setPiece(piece);
+	Piece capture = pos.get(to);
+	result.setCapture(capture);
+	PieceType pt = piece_type(piece);
+	result.flagEnPassant(pt == PAWN && pos.enpassantsq & cell(to) && capture != NO_PIECE);
+	result.flagDoublePawnPush(pt == PAWN && abs(to - from) == 16);
+	if(pt == KING && abs(from - to) == 2)
+		result.setCastling( (CastlingSide)
+			((pos.side == WHITE ? CS_WHITE : CS_BLACK) &
+			(cell(to) & FILE_G ? KING_SIDE : QUEEN_SIDE))
+		);
+	
+	return result;
 }

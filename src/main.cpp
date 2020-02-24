@@ -1,16 +1,33 @@
 
 #include <iostream>
 #include "engine/init.h"
-#include "engine/attacks.h"
+#include "engine/perft.h"
 #include "engine/textutils.h"
+
+void perft(int depth, Position& pos) {
+	printf("Searching depth: %d\n", depth);
+	perft_divide(depth, pos);
+}
 
 int main(int argc, char const *argv[])
 {
 	init();
+	while (true) {
+		char fen[255];
+		std::cin.getline(fen, 255);
+		Position pos = load_fen(fen);
+		printf("fen: %s\n", fen);
+		std::cout << to_string(pos) << std::endl;
+		std::string cmd;
+		while(cmd != "depth") {
+			std::cin >> cmd;
+			if(cmd == "depth") break;
+			pos.makeMove(from_uci(cmd, pos));
+			std::cout << to_string(pos) << std::endl;
 
-	Position pos = load_fen("rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 1 2");
-	
-	std::cout << to_string(pos) << std::endl;
-	std::cout << to_string(attacks_b(idx(5, 0), pos.pieces()));
-	return 0;
+		}
+		int depth = 0;
+		std::cin >> depth;
+		perft(depth, pos);
+	}
 }
