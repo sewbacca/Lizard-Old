@@ -117,18 +117,14 @@ TEST_CASE("Make move destroy castling", "[position]") {
 	}
 
 	SECTION("with a-rook") {
-		Move move;
-
-		move.setFrom(sq("a8"));
-		move.setTo(sq("a7"));
-		move.setPiece(BR);
+		Move move = from_uci("a8a7", pos);
 
 		pos.makeMove(move);
 
 		CHECK(pos.get(sq("a8")) == NO_PIECE);
 		CHECK(pos.get(sq("a7")) == BR);
 		CHECK(pos.fiftyply == 1);
-		CHECK(pos.rights == (CS_ALL & ~B_OO));
+		CHECK(pos.rights == (CS_ALL & ~B_OOO));
 		CHECK(pos.hisply == 12);
 
 		pos.undoMove();
@@ -148,7 +144,7 @@ TEST_CASE("Make move destroy castling", "[position]") {
 		CHECK(pos.get(sq("h8")) == NO_PIECE);
 		CHECK(pos.get(sq("h7")) == BR);
 		CHECK(pos.fiftyply == 1);
-		CHECK(pos.rights == (CS_ALL & ~B_OOO));
+		CHECK(pos.rights == (CS_ALL & ~B_OO));
 		CHECK(pos.hisply == 12);
 		
 		pos.undoMove();
