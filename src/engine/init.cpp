@@ -7,6 +7,7 @@
 
 #include "hash.h"
 #include "attacks.h"
+#include "pv.h"
 
 struct Timer {
 	std::chrono::high_resolution_clock::time_point start;
@@ -28,6 +29,7 @@ void init() {
 
 	cache += init_hash();
 	cache += init_attacks();
+	cache += init_pv(0xFFFFF);
 
 	std::cout << "Cache size: " << (cache / 1024) << "KB\n";
 	std::cout << "Initialization duration: " << tim.stop() << "ms" << std::endl;

@@ -1,7 +1,6 @@
 
 #include <cassert>
 #include <algorithm>
-#include <iostream>
 
 #include "position.h"
 #include "bitboard.h"
@@ -71,9 +70,13 @@ constexpr Square POS_BK =	idx(4, 7);
 void Position::makeMove(Move move) {
 	// Store for restore
 	history[hisply] = UndoMove(move);
-	history[hisply].before_enpassantsq = enpassantsq;
-	history[hisply].before_rights = rights;
-	history[hisply].before_fiftyply = fiftyply;
+	UndoMove& undoMove = history[hisply];
+
+	undoMove.hash = hash();
+
+	undoMove.before_enpassantsq = enpassantsq;
+	undoMove.before_rights = rights;
+	undoMove.before_fiftyply = fiftyply;
 
 	Piece rook = side == WHITE ? WR : BR;
 	Piece king = side == WHITE ? WK : BK;
@@ -185,4 +188,7 @@ void Position::undoMove() {
 	fiftyply = undomove.before_fiftyply;
 	rights = undomove.before_rights;
 	enpassantsq = undomove.before_enpassantsq;
+
+	// If this fails you certainly have forgotten the appropiate undoMove()
+	assert(hash() == undomove.hash);
 }

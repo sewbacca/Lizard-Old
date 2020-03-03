@@ -89,7 +89,10 @@ public:
 	Move();
 
 	friend class UndoMove;
+	friend bool operator ==(Move a, Move b);
 };
+
+const Move NO_MOVE = Move();
 
 constexpr bool is_inside(Square);
 constexpr bool is_inside(int x, int y);
@@ -100,6 +103,7 @@ constexpr int file(Square);
 constexpr Color piece_col(Piece);
 constexpr PieceType piece_type(Piece);
 constexpr Piece combine(Color, PieceType);
+inline bool operator ==(Move a, Move b);
 
 // Bitwise operator for CastlingSide
 
@@ -167,4 +171,8 @@ constexpr PieceType piece_type(Piece p) {
 constexpr Piece combine(Color col, PieceType p) {
 	Piece start = col == WHITE ? WP : BP;
 	return (Piece) (start + p);
+}
+
+inline bool operator ==(Move a, Move b) {
+	return a.move == b.move;
 }

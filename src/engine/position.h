@@ -9,6 +9,7 @@ public:
 	bitboard before_enpassantsq = 0;
 	int before_fiftyply = 0;
 
+	U64 hash;
 	UndoMove(Move move) { this->move = move.move; }
 	UndoMove() { }
 };
@@ -20,9 +21,8 @@ private:
 	bitboard bp{0}, bn{0}, bb{0}, br{0}, bq{0}, bk{0};
 
 	U64 m_hash {0};
-
-	UndoMove history[MAX_HISTORY];
 public:
+	UndoMove history[MAX_HISTORY];
 	Color side = WHITE;
 	CastlingSide rights = NO_CASTLING;
 	bitboard enpassantsq = 0;
