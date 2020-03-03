@@ -1,6 +1,6 @@
 
 #include "catch.hpp"
-#include "engine/def.h"
+#include "def.h"
 
 TEST_CASE("Move encoding", "[Move]") {
 	Move move;

@@ -1,7 +1,7 @@
 
 #include "catch.hpp"
-#include "engine/pv.h"
-#include "engine/textutils.h"
+#include "pv.h"
+#include "textutils.h"
 
 TEST_CASE("Store and probe a move", "[pv]") {
 	Position pos = load_fen(startpos);

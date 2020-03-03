@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
-#include "engine/init.h"
+#include "init.h"
 
 int main( int argc, char* argv[] ) {
 	init();

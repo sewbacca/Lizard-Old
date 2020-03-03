@@ -1,8 +1,8 @@
 
 #include <iostream>
-#include "engine/init.h"
-#include "engine/textutils.h"
-#include "engine/search.h"
+#include "init.h"
+#include "textutils.h"
+#include "search.h"
 
 int main(int argc, char const *argv[])
 {

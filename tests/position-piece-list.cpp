@@ -1,6 +1,6 @@
 
 #include "catch.hpp"
-#include "engine/position.h"
+#include "position.h"
 
 TEST_CASE("Position piece list", "[Position]") {
 	Position p;

@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "engine/bitboard.h"
+#include "bitboard.h"
 
 TEST_CASE("Bitboard set cell", "[Bitboard]") {
 	bitboard test = cell(12);

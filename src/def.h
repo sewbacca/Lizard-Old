@@ -3,7 +3,7 @@
 
 #include <cstdint>
 #include <cstdlib>
-#include "misc/enum_operator.h"
+#include "enum_operator.h"
 
 #define startpos "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
@@ -11,8 +11,6 @@ typedef uint64_t U64;
 typedef uint64_t bitboard;
 typedef int Square;
 
-constexpr int MAX_MOVES = 512;
-constexpr int MAX_HISTORY = 2048;
 constexpr int MAX_PIECES = 10;
 constexpr int BOARD_SIZE = 8;
 constexpr int SQUARE_COUNT = BOARD_SIZE * BOARD_SIZE;

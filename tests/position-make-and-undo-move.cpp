@@ -1,7 +1,7 @@
 #include "catch.hpp"
-#include "engine/position.h"
-#include "engine/textutils.h"
-#include "engine/bitboard.h"
+#include "position.h"
+#include "textutils.h"
+#include "bitboard.h"
 
 constexpr int sq(const char *s) {
 	return (s[0] - 'a' + (s[1] - '1') * BOARD_SIZE);

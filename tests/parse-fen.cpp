@@ -1,5 +1,5 @@
 #include "catch.hpp"
-#include "engine/textutils.h"
+#include "textutils.h"
 
 #define index(x, y) ((x) + (y) * BOARD_SIZE)
 

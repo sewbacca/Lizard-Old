@@ -3,6 +3,8 @@
 
 #include "def.h"
 
+constexpr int MAX_HISTORY = 2048;
+
 class UndoMove : public Move {
 public:
 	CastlingSide before_rights = NO_CASTLING;

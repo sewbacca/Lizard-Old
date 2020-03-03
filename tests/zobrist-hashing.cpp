@@ -1,6 +1,6 @@
 #include "catch.hpp"
-#include "engine/position.h"
-#include "engine/textutils.h"
+#include "position.h"
+#include "textutils.h"
 
 TEST_CASE("Position hashing", "[posistion] [hash]") {
 	Position pos1 = load_fen(startpos);
