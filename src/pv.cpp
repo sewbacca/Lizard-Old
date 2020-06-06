@@ -2,8 +2,8 @@
 #include "pv.h"
 
 struct Move_pv {
-	U64 hash;
-	Move move;
+	U64 hash = 0;
+	Move move = NO_MOVE;
 };
 
 Move_pv* pv_table = nullptr;

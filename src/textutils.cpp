@@ -4,6 +4,7 @@
 #include "bitboard_constants.h"
 
 #include <sstream>
+#include <iostream>
 
 #include <cassert>
 #include <cmath>
@@ -114,7 +115,7 @@ Position load_fen(const char* fen) {
 						p = (Piece) (p + 5);
 						break;
 					default:
-						assert(false);
+						break;
 				}
 
 				result.set(idx(x, y), p);
@@ -252,6 +253,7 @@ Square field(char collumn, char row) {
 
 PieceType to_piece_type(char piece_type) {
 	piece_type = tolower(piece_type);
+	std::cout << (piece_type) << std::endl;
 	switch (piece_type)
 	{
 	case 'p':
@@ -278,8 +280,9 @@ Move from_uci(std::string move, const Position& pos) {
 	Square to = field(move[2], move[3]);
 	Piece promotion = NO_PIECE;
 
-	if(move.size() > 4)
-		promotion = combine(pos.side, to_piece_type(move[5]));
+	if(move.size() > 4) {
+		promotion = combine(pos.side, to_piece_type(move[4]));
+	}
 
 	Move result;
 	result.setFrom(from);

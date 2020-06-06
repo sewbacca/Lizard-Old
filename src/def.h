@@ -64,6 +64,8 @@ protected:
 	*/
 	int move = 0;
 public:
+	int score = 0;
+	
 	Square from();
 	Square to();
 	Piece piece();

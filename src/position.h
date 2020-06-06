@@ -31,6 +31,7 @@ public:
 	
 	int fiftyply = 0;
 	int hisply = 0;
+	// The ply from where we are searching
 	int ply = 0;
 
 	bitboard* board() { return &wp; }
@@ -48,6 +49,10 @@ public:
 
 	Square piecepos[PIECE_TYPES][MAX_PIECES];
 	int piececount [PIECE_TYPES] {};
+
+	Move search_killers[MAX_HISTORY][2] = { };
+	int history_heuristic[SQUARE_COUNT][SQUARE_COUNT] = { };
+
 
 	U64 hash() const;
 

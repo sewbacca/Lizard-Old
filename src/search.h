@@ -7,10 +7,19 @@
 
 constexpr int MATE = 3000;
 constexpr int INFINITE = 3100;
+constexpr int MAX_DEPTH = 64;
 
 struct SearchInfo {
-	size_t depth = 1;
-	bool running = true;
+	size_t depth = MAX_DEPTH;
+	U64 start;
+	U64 end;
+	size_t nodes;
+	Move bestmove;
+	bool stopped = false;
+	bool infinite = false;
+
+	int fhf = 0;
+	int fh = 0;
 };
 
-void search(const SearchInfo&, Position& pos);
+void search(SearchInfo* info, Position* pos);

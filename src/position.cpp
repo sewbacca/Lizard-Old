@@ -116,6 +116,9 @@ void Position::makeMove(Move move) {
 			rights &= ~(side == WHITE ? CS_WHITE : CS_BLACK);
 		}
 
+		if(move.capture() != NO_PIECE)
+			fiftyply = 0;
+
 		// Remove permission if rook was captured
 		if(rank(move.to()) == (side == WHITE ? 7 : 0) && piece_type(move.capture()) == ROOK) {
 			if(file(move.to()) == 7) {
