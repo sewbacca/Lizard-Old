@@ -149,7 +149,7 @@ void uci_loop(string author, string engine_name)
 
 			if (movetime == -1)
 			{
-				movetime = time_left / movestogo + time_inc - 50;    // 50 ms buffer
+				movetime = time_left / movestogo + time_inc - 50;	 // 50 ms buffer
 			}
 
 			info.depth   = depth;

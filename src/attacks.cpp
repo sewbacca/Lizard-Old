@@ -43,7 +43,7 @@ bool is_attacked(Square sq, Color attacker, const Position& pos)
 	bitboard kings { pos.pieces(attacker, KING) };
 
 	return dia & attacks_b(sq, all) || hv & attacks_r(sq, all) || knights & attacks_n(sq) ||
-	    pawns & defenders_p(sq, attacker) || kings & attacks_k(sq);
+		pawns & defenders_p(sq, attacker) || kings & attacks_k(sq);
 }
 
 bool is_in_check(const Position& pos, Color side)

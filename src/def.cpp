@@ -11,23 +11,27 @@
 	0011 1100 0000 0000 0000 0000 0000 0000 -> Castle
 */
 
-static constexpr int MASK_FROM { 0b0000'0000'0000'0000'0000'0000'0011'1111 };
-static constexpr int MASK_TO { 0b0000'0000'0000'0000'0000'1111'1100'0000 };
-static constexpr int MASK_PROM { 0b0000'0000'0000'0000'1111'0000'0000'0000 };
-static constexpr int MASK_MOV { 0b0000'0000'0000'1111'0000'0000'0000'0000 };
-static constexpr int MASK_CAP { 0b0000'0000'1111'0000'0000'0000'0000'0000 };
-static constexpr int MASK_EP { 0b0000'0001'0000'0000'0000'0000'0000'0000 };
-static constexpr int MASK_DPP { 0b0000'0010'0000'0000'0000'0000'0000'0000 };
+// clang-format off
+
+static constexpr int MASK_FROM     { 0b0000'0000'0000'0000'0000'0000'0011'1111 };
+static constexpr int MASK_TO       { 0b0000'0000'0000'0000'0000'1111'1100'0000 };
+static constexpr int MASK_PROM     { 0b0000'0000'0000'0000'1111'0000'0000'0000 };
+static constexpr int MASK_MOV      { 0b0000'0000'0000'1111'0000'0000'0000'0000 };
+static constexpr int MASK_CAP      { 0b0000'0000'1111'0000'0000'0000'0000'0000 };
+static constexpr int MASK_EP       { 0b0000'0001'0000'0000'0000'0000'0000'0000 };
+static constexpr int MASK_DPP      { 0b0000'0010'0000'0000'0000'0000'0000'0000 };
 static constexpr int MASK_CASTLING { 0b0011'1100'0000'0000'0000'0000'0000'0000 };
 
-static constexpr int OFF_FROM { 0 };
-static constexpr int OFF_TO { 6 };
-static constexpr int OFF_PROM { 12 };
-static constexpr int OFF_MOV { 16 };
-static constexpr int OFF_CAP { 20 };
-static constexpr int OFF_EP { 24 };
-static constexpr int OFF_DPP { 25 };
-static constexpr int OFF_CASTLING { 26 };
+static constexpr int OFF_FROM      { 0 };
+static constexpr int OFF_TO        { 6 };
+static constexpr int OFF_PROM      { 12 };
+static constexpr int OFF_MOV       { 16 };
+static constexpr int OFF_CAP       { 20 };
+static constexpr int OFF_EP        { 24 };
+static constexpr int OFF_DPP       { 25 };
+static constexpr int OFF_CASTLING  { 26 };
+
+// clang-format on
 
 // Standard constructor
 

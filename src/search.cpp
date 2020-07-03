@@ -64,7 +64,7 @@ static void next_move(Move* list, Move* end, Position& pos)
 
 	// };
 	Move* maxmove = std::max_element(
-	    list, end, [&pos](const Move& largest, const Move& cmp) { return largest.score < cmp.score; });
+		list, end, [&pos](const Move& largest, const Move& cmp) { return largest.score < cmp.score; });
 	std::swap(*list, *maxmove);
 
 	assert(list->score >= maxmove->score);
@@ -86,7 +86,7 @@ static void index(Move* list, Move* end, Position& pos)
 		{
 			if (move->isEnPassant()) move->score += 1;
 			move->score =
-			    capture + VALUES[piece_type(move->capture())] * 100 - VALUES[piece_type(move->piece())];
+				capture + VALUES[piece_type(move->capture())] * 100 - VALUES[piece_type(move->piece())];
 		}
 		if (pos.search_killers[pos.ply][0] == *move) move->score += killer0;
 		if (pos.search_killers[pos.ply][1] == *move) move->score += killer1;
@@ -103,8 +103,7 @@ static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& 
 	if (depth <= 0)
 	{
 		info.nodes++;
-		;
-		return evaluate(pos);	 // -quiesence(-beta, -alpha);
+		return evaluate(pos);	     // -quiesence(-beta, -alpha);
 	}
 	info.nodes++;
 
@@ -127,7 +126,8 @@ static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& 
 		next_move(move, end, pos);
 
 		if (!make_move(*move, pos)) continue;
-		legal_count++;	  // This is a legal move
+		// It's legal
+		legal_count++;
 
 		int node { -alphabeta(-beta, -alpha, depth - 1, pos, info) };
 		pos.undoMove();
@@ -199,8 +199,8 @@ void search(SearchInfo* info_ptr, Position* pos_ptr)
 		-> iterative deepening
 	*/
 
-	SearchInfo& info = *info_ptr;
-	Position& pos	 = *pos_ptr;
+	SearchInfo& info { *info_ptr };
+	Position& pos { *pos_ptr };
 
 	init_search(info, pos);
 

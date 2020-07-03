@@ -11,7 +11,7 @@
 		".vscode/dep": true,
 		".vscode/obj": true,
 		"**/**.cpp": false,
-		"**/**.h": false,
+		"**/**.h": true,
 		".clang-format": true
 	},
 	"C_Cpp.formatting": "Default",
@@ -82,4 +82,5 @@
 		"typeinfo": "cpp"
 	},
 	"testMate.cpp.test.executables": "bin/debug/test",
+	"explorerExclude.backup": null,
 }

@@ -14,7 +14,7 @@ bitboard ROOK_ATKS[0xfffff];
 bitboard BISHOP_ATKS[0xfffff];
 MagicBitboard MAGIC_ROOKS[SQUARE_COUNT];
 MagicBitboard MAGIC_BISHOPS[SQUARE_COUNT];
-}    // namespace Magic
+}	 // namespace Magic
 
 struct Vector2D
 {
@@ -101,7 +101,7 @@ static void init_cache(std::array<Vector2D, 4> deltas, Magic::MagicBitboard magi
 			{
 				int magic_index { w.index(occupied[i]) };
 				if (epoch[magic_index] < cnt)
-				{    // Didn't tried yet?
+				{	 // Didn't tried yet?
 					w.list[magic_index] = reference_atks[i];
 					epoch[magic_index]  = cnt;
 				}

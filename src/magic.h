@@ -27,4 +27,4 @@ extern MagicBitboard MAGIC_ROOKS[SQUARE_COUNT];
 extern MagicBitboard MAGIC_BISHOPS[SQUARE_COUNT];
 
 size_t init_magic();
-}    // namespace Magic
+}	 // namespace Magic

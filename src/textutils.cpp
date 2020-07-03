@@ -89,11 +89,11 @@ Position load_fen(const char* fen)
 			assert(isdigit(*c) || islower(*c) || isupper(*c) || *c == '/');
 
 			if (isdigit(*c))
-			{    // Skip empty pieces
+			{	 // Skip empty pieces
 				x += *c - '0';
 			}
 			else if (*c == '/')
-			{    // Next
+			{	 // Next
 				x = 0;
 				y--;
 			}
@@ -102,7 +102,7 @@ Position load_fen(const char* fen)
 				Piece p { isupper(*c) ? WP : BP };
 				switch (toupper(*c))
 				{
-					case 'P':    // Do nothing
+					case 'P':	 // Do nothing
 						break;
 					case 'N':
 						p = (Piece)(p + 1);
@@ -131,7 +131,7 @@ Position load_fen(const char* fen)
 		}
 	}
 
-	{    // Color
+	{	 // Color
 		c = skipwhite(c);
 
 		if (*c == 'w') result.side = WHITE;
@@ -141,7 +141,7 @@ Position load_fen(const char* fen)
 			assert(false);
 	}
 
-	{    // Castling rights
+	{	 // Castling rights
 		c = skipwhite(c);
 
 		if (*c == '-') goto enpassantsq;
@@ -192,7 +192,7 @@ Position load_fen(const char* fen)
 		result.fiftyply = atoi(c);
 	}
 
-	{    // Hisply
+	{	 // Hisply
 		c = skipwhite(c);
 
 		result.hisply = atoi(c) * 2 + (result.side == WHITE ? 0 : 1) - 2;
@@ -229,7 +229,12 @@ static std::string field(Square sq)
 std::string to_string(Move move)
 {
 	const char PIECES[] = {
-		'P', 'N', 'B', 'R', 'Q', 'K',
+		'P',
+		'N',
+		'B',
+		'R',
+		'Q',
+		'K',
 	};
 
 	std::string readable { "" };
@@ -300,8 +305,8 @@ Move from_uci(std::string move, const Position& pos)
 	result.flagEnPassant(pt == PAWN && pos.enpassantsq & cell(to) && capture != NO_PIECE);
 	result.flagDoublePawnPush(pt == PAWN && abs(to - from) == 16);
 	if (pt == KING && abs(from - to) == 2)
-		result.setCastling((CastlingSide)((pos.side == WHITE ? CS_WHITE : CS_BLACK) &
-						  (cell(to) & FILE_G ? KING_SIDE : QUEEN_SIDE)));
+		result.setCastling((CastlingSide)(
+			(pos.side == WHITE ? CS_WHITE : CS_BLACK) & (cell(to) & FILE_G ? KING_SIDE : QUEEN_SIDE)));
 
 	return result;
 }

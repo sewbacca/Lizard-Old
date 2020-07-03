@@ -139,7 +139,7 @@ Move* gen_king_silent(const Position& pos, Color side, Move* list)
 
 				if ((free & all) == 0 && !is_attacked(walk_through, swap(side), pos))
 				{
-					Move& castle = *list++;
+					Move& castle { *list++ };
 
 					castle.setFrom(from);
 					castle.setTo(idx(6, y_0));
@@ -154,7 +154,7 @@ Move* gen_king_silent(const Position& pos, Color side, Move* list)
 
 				if ((free & all) == 0 && !is_attacked(walk_through, swap(side), pos))
 				{
-					Move& castle = *list++;
+					Move& castle { *list++ };
 
 					castle.setFrom(from);
 					castle.setTo(idx(2, y_0));
@@ -210,7 +210,7 @@ static Move* gen_pawn_captures(const Position& pos, Color side, Move* list)
 	Vertical dir { side == WHITE ? NORTH : SOUTH };
 
 	auto append = [&](bitboard moves, int offX,
-			  Move* add(Square from, Square to, Color side, Move * list, const Position&)) -> void {
+			      Move* add(Square from, Square to, Color side, Move * list, const Position&)) -> void {
 		while (moves)
 		{
 			Square to { pop_lsb(moves) };
@@ -273,7 +273,7 @@ static Move* gen_pawn_normal(const Position& pos, Color side, Move* list)
 
 static Move* add_capture(Square from, Square to, Move* list, const Position& pos)
 {
-	Move& move = *list;
+	Move& move { *list };
 
 	move.setFrom(from);
 	move.setTo(to);
@@ -285,7 +285,7 @@ static Move* add_capture(Square from, Square to, Move* list, const Position& pos
 
 static Move* add_silent(Square from, Square to, Move* list, const Position& pos)
 {
-	Move& move = *list;
+	Move& move { *list };
 
 	move.setFrom(from);
 	move.setTo(to);
@@ -294,7 +294,7 @@ static Move* add_silent(Square from, Square to, Move* list, const Position& pos)
 	return ++list;
 }
 static Move create(Square from, Square to, Color side, Piece capture, Piece promotion, bool enpassant = false,
-		   bool doublepush = false)
+	bool doublepush = false)
 {
 	Move res;
 
