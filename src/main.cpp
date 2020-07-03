@@ -3,7 +3,7 @@
 #include "init.h"
 #include "uci.h"
 
-int main(int argc, char const *argv[])
+int main()
 {
 	init();
 	uci_loop("Sewbacca", "Lizard");

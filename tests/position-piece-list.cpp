@@ -2,7 +2,8 @@
 #include "catch.hpp"
 #include "position.h"
 
-TEST_CASE("Position piece list", "[Position]") {
+TEST_CASE("Position piece list", "[Position]")
+{
 	Position p;
 
 	p.set(8, WK);

@@ -2,7 +2,8 @@
 #include "catch.hpp"
 #include "position.h"
 
-TEST_CASE("Position set and get", "[Position]") {
+TEST_CASE("Position set and get", "[Position]")
+{
 	Position pos;
 
 	pos.set(63 - 7, WP);

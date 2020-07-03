@@ -2,9 +2,10 @@
 #include "position.h"
 #include "textutils.h"
 
-TEST_CASE("Position hashing", "[posistion] [hash]") {
-	Position pos1 = load_fen(startpos);
-	Position pos2 = load_fen(startpos);
+TEST_CASE("Position hashing", "[posistion] [hash]")
+{
+	Position pos1 { load_fen(startpos) };
+	Position pos2 { load_fen(startpos) };
 
 	CHECK(pos1.hash() == pos2.hash());
 

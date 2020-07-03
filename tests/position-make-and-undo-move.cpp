@@ -3,14 +3,13 @@
 #include "textutils.h"
 #include "bitboard.h"
 
-constexpr int sq(const char *s) {
-	return (s[0] - 'a' + (s[1] - '1') * BOARD_SIZE);
-}
+constexpr int sq(const char* s) { return (s[0] - 'a' + (s[1] - '1') * BOARD_SIZE); }
 
-TEST_CASE("Make move double jump", "[position]") {
-	Position start = load_fen(startpos);
+TEST_CASE("Make move double jump", "[position]")
+{
+	Position start { load_fen(startpos) };
 
-	U64 hash = start.hash();
+	U64 hash { start.hash() };
 
 	Move move;
 
@@ -35,10 +34,11 @@ TEST_CASE("Make move double jump", "[position]") {
 	CHECK(hash == start.hash());
 }
 
-TEST_CASE("Make move en passant", "[position]") {
-	Position pos = load_fen("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3");
+TEST_CASE("Make move en passant", "[position]")
+{
+	Position pos { load_fen("rnbqkbnr/ppp1p1pp/8/3pPp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3") };
 
-	U64 hash = pos.hash();
+	U64 hash { pos.hash() };
 
 	Move move;
 
@@ -63,10 +63,11 @@ TEST_CASE("Make move en passant", "[position]") {
 	CHECK(hash == pos.hash());
 }
 
-TEST_CASE("Make move promotion", "[position]") {
-	Position pos = load_fen("rnbq1bnr/pppkpP1p/6p1/3p4/8/8/PPPP1PPP/RNBQKBNR w KQ - 1 5");
+TEST_CASE("Make move promotion", "[position]")
+{
+	Position pos { load_fen("rnbq1bnr/pppkpP1p/6p1/3p4/8/8/PPPP1PPP/RNBQKBNR w KQ - 1 5") };
 
-	U64 hash = pos.hash();
+	U64 hash { pos.hash() };
 
 	Move move;
 
@@ -84,19 +85,21 @@ TEST_CASE("Make move promotion", "[position]") {
 	CHECK(pos.hisply == 9);
 	CHECK(pos.enpassantsq == 0);
 	CHECK(pos.side == BLACK);
-	
+
 	pos.undoMove();
 
 	CHECK(hash == pos.hash());
 }
 
-TEST_CASE("Make move destroy castling", "[position]") {
-	Position pos = load_fen("rnbqkbnr/1pP3p1/4p3/p4p1p/P6P/8/1PPP1PP1/RNBQKBNR b KQkq - 0 6");
-	U64 hash = pos.hash();
+TEST_CASE("Make move destroy castling", "[position]")
+{
+	Position pos { load_fen("rnbqkbnr/1pP3p1/4p3/p4p1p/P6P/8/1PPP1PP1/RNBQKBNR b KQkq - 0 6") };
+	U64 hash { pos.hash() };
 
 	CHECK(pos.rights == CS_ALL);
 
-	SECTION("with king") {
+	SECTION("with king")
+	{
 		Move move;
 
 		move.setFrom(sq("e8"));
@@ -116,8 +119,9 @@ TEST_CASE("Make move destroy castling", "[position]") {
 		CHECK(hash == pos.hash());
 	}
 
-	SECTION("with a-rook") {
-		Move move = from_uci("a8a7", pos);
+	SECTION("with a-rook")
+	{
+		Move move { from_uci("a8a7", pos) };
 
 		pos.makeMove(move);
 
@@ -132,7 +136,8 @@ TEST_CASE("Make move destroy castling", "[position]") {
 		CHECK(hash == pos.hash());
 	}
 
-	SECTION("with h-rook") {
+	SECTION("with h-rook")
+	{
 		Move move;
 
 		move.setFrom(sq("h8"));
@@ -146,19 +151,20 @@ TEST_CASE("Make move destroy castling", "[position]") {
 		CHECK(pos.fiftyply == 1);
 		CHECK(pos.rights == (CS_ALL & ~B_OO));
 		CHECK(pos.hisply == 12);
-		
+
 		pos.undoMove();
 
 		CHECK(hash == pos.hash());
 	}
 }
 
-TEST_CASE("Make move castling", "[Position]") {
-	Position pos = load_fen("r3k2r/1pqb2p1/2n1pn2/pN3p1p/Pb5P/2P2NP1/1P1P1P2/R1BQKB1R b KQkq - 0 11");
-	U64 hash = pos.hash();
+TEST_CASE("Make move castling", "[Position]")
+{
+	Position pos { load_fen("r3k2r/1pqb2p1/2n1pn2/pN3p1p/Pb5P/2P2NP1/1P1P1P2/R1BQKB1R b KQkq - 0 11") };
+	U64 hash { pos.hash() };
 
-
-	SECTION("OO") {
+	SECTION("OO")
+	{
 		Move move;
 
 		move.setFrom(sq("e8"));
@@ -171,13 +177,14 @@ TEST_CASE("Make move castling", "[Position]") {
 		CHECK(pos.get(sq("g8")) == BK);
 		CHECK(pos.get(sq("f8")) == BR);
 		CHECK(pos.get(sq("e8")) == NO_PIECE);
-		
+
 		pos.undoMove();
 
 		CHECK(hash == pos.hash());
 	}
 
-	SECTION("OOO") {
+	SECTION("OOO")
+	{
 		Move move;
 
 		move.setFrom(sq("e8"));
@@ -191,7 +198,7 @@ TEST_CASE("Make move castling", "[Position]") {
 		CHECK(pos.get(sq("c8")) == BK);
 		CHECK(pos.get(sq("b8")) == NO_PIECE);
 		CHECK(pos.get(sq("a8")) == NO_PIECE);
-		
+
 		pos.undoMove();
 
 		CHECK(hash == pos.hash());

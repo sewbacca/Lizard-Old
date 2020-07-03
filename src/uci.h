@@ -3,4 +3,4 @@
 
 #include <string>
 
-void uci_loop(std::string author, std::string engine);
+void uci_loop(std::string author, std::string engine_name);

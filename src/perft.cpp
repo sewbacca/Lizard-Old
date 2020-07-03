@@ -7,21 +7,22 @@
 #include "attacks.h"
 #include "textutils.h"
 
+size_t perft(size_t depth, Position& pos)
+{
+	if (depth == 0) return 1;
 
-size_t perft(size_t depth, Position& pos) {
-	if(depth == 0)
-		return 1;
-	
-	Color side = pos.side;
+	Color side { pos.side };
 
 	Move moves[MAX_MOVES];
 	Move* end = gen_pseudo(pos, side, moves);
 
-	size_t leaf_nodes = 0;
+	size_t leaf_nodes { 0 };
 
-	for(Move* move = moves; move < end; move++) {
+	for (Move* move = moves; move < end; move++)
+	{
 		pos.makeMove(*move);
-		if(is_in_check(pos, side)) {
+		if (is_in_check(pos, side))
+		{
 			pos.undoMove();
 			continue;
 		}
@@ -34,30 +35,33 @@ size_t perft(size_t depth, Position& pos) {
 	return leaf_nodes;
 }
 
-void perft_divide(size_t depth, Position& pos) {
-	if(depth == 0) {
+void perft_divide(size_t depth, Position& pos)
+{
+	if (depth == 0)
+	{
 		std::cout << "Total: 0" << std::endl;
 		return;
 	}
-	
-	Color side = pos.side;
+
+	Color side { pos.side };
 
 	Move moves[MAX_MOVES];
 	Move* end = gen_pseudo(pos, side, moves);
 
-	size_t leaf_nodes = 0;
+	size_t leaf_nodes { 0 };
 
 	std::cout << "Move count: " << end - moves << std::endl;
-	
 
-	for(Move* move = moves; move < end; move++) {
+	for (Move* move = moves; move < end; move++)
+	{
 		pos.makeMove(*move);
-		if(is_in_check(pos, side)) {
+		if (is_in_check(pos, side))
+		{
 			pos.undoMove();
 			continue;
 		}
 
-		size_t local_nodes = perft(depth - 1, pos);
+		size_t local_nodes { perft(depth - 1, pos) };
 		leaf_nodes += local_nodes;
 
 		std::cout << to_uci(*move) << ": " << local_nodes << std::endl;
@@ -68,22 +72,26 @@ void perft_divide(size_t depth, Position& pos) {
 	std::cout << "Total: " << leaf_nodes << std::endl;
 }
 
-void step_through(size_t depth, Position& pos) {
+void step_through(size_t depth, Position& pos)
+{
 	std::cout << to_string(pos) << std::endl;
 	std::cin.get();
-	if(depth == 0) {
+	if (depth == 0)
+	{
 		std::cout << "Total: 0" << std::endl;
 		return;
 	}
-	
-	Color side = pos.side;
+
+	Color side { pos.side };
 
 	Move moves[MAX_MOVES];
 	Move* end = gen_pseudo(pos, side, moves);
 
-	for(Move* move = moves; move < end; move++) {
+	for (Move* move = moves; move < end; move++)
+	{
 		pos.makeMove(*move);
-		if(is_in_check(pos, side)) {
+		if (is_in_check(pos, side))
+		{
 			pos.undoMove();
 			continue;
 		}

@@ -7,7 +7,7 @@ endif
 
 # Compiler Args
 CXX = g++
-CXXFLAGS = --std=c++17 -Wall -c -Winline
+CXXFLAGS = --std=c++17 -Wall -c -Winline -Wextra -pedantic
 
 # Naming
 

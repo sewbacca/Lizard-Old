@@ -2,7 +2,8 @@
 #include "catch.hpp"
 #include "def.h"
 
-TEST_CASE("Move encoding", "[Move]") {
+TEST_CASE("Move encoding", "[Move]")
+{
 	Move move;
 
 	move.setPiece(WQ);
@@ -23,7 +24,8 @@ TEST_CASE("Move encoding", "[Move]") {
 	CHECK(move.to() == 12);
 }
 
-TEST_CASE("Move encoding with to less information", "[Move]") {
+TEST_CASE("Move encoding with to less information", "[Move]")
+{
 	Move move;
 
 	move.setPiece(WP);

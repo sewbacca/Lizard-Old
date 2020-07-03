@@ -5,21 +5,22 @@
 
 #include "position.h"
 
-constexpr int MATE = 3000;
-constexpr int INFINITE = 3100;
-constexpr int MAX_DEPTH = 64;
+constexpr int MATE { 3000 };
+constexpr int INFINITE { 3100 };
+constexpr int MAX_DEPTH { 64 };
 
-struct SearchInfo {
-	size_t depth = MAX_DEPTH;
+struct SearchInfo
+{
+	size_t depth { MAX_DEPTH };
 	U64 start;
 	U64 end;
 	size_t nodes;
 	Move bestmove;
-	bool stopped = false;
-	bool infinite = false;
+	bool stopped { false };
+	bool infinite { false };
 
-	int fhf = 0;
-	int fh = 0;
+	int fhf { 0 };
+	int fh { 0 };
 };
 
 void search(SearchInfo* info, Position* pos);

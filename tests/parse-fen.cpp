@@ -1,28 +1,32 @@
 #include "catch.hpp"
 #include "textutils.h"
 
-#define index(x, y) ((x) + (y) * BOARD_SIZE)
+#define index(x, y) ((x) + (y)*BOARD_SIZE)
 
-TEST_CASE("Parse a fen correctly", "[fen]") {
-	Position result = load_fen(startpos);
+TEST_CASE("Parse a fen correctly", "[fen]")
+{
+	Position result { load_fen(startpos) };
 
 	// Pawns
-	int y = BOARD_SIZE - 2;
-	for(int x = 0; x < BOARD_SIZE; x++) {
+	int y { BOARD_SIZE - 2 };
+	for (int x { 0 }; x < BOARD_SIZE; x++)
+	{
 		CHECK(result.get(index(x, y)) == BP);
 	}
 
 	y = 1;
-	for(int x = 0; x < BOARD_SIZE; x++) {
+	for (int x { 0 }; x < BOARD_SIZE; x++)
+	{
 		CHECK(result.get(index(x, y)) == WP);
 	}
 
 	// Empty
-	for(int y = 3; y < 6; y++) {
-		for(int x = 0; x < BOARD_SIZE; x++)
+	for (int y { 3 }; y < 6; y++)
+	{
+		for (int x { 0 }; x < BOARD_SIZE; x++)
 			CHECK(result.get(index(x, y)) == NO_PIECE);
 	}
-	
+
 	// Rooks
 	CHECK(result.get(index(0, 0)) == WR);
 	CHECK(result.get(index(7, 0)) == WR);

@@ -11,27 +11,28 @@
 	0011 1100 0000 0000 0000 0000 0000 0000 -> Castle
 */
 
-static constexpr int MASK_FROM 		= 0b0000'0000'0000'0000'0000'0000'0011'1111;
-static constexpr int MASK_TO 		= 0b0000'0000'0000'0000'0000'1111'1100'0000;
-static constexpr int MASK_PROM 		= 0b0000'0000'0000'0000'1111'0000'0000'0000;
-static constexpr int MASK_MOV 		= 0b0000'0000'0000'1111'0000'0000'0000'0000;
-static constexpr int MASK_CAP 		= 0b0000'0000'1111'0000'0000'0000'0000'0000;
-static constexpr int MASK_EP 		= 0b0000'0001'0000'0000'0000'0000'0000'0000;
-static constexpr int MASK_DPP 		= 0b0000'0010'0000'0000'0000'0000'0000'0000;
-static constexpr int MASK_CASTLING 	= 0b0011'1100'0000'0000'0000'0000'0000'0000;
+static constexpr int MASK_FROM { 0b0000'0000'0000'0000'0000'0000'0011'1111 };
+static constexpr int MASK_TO { 0b0000'0000'0000'0000'0000'1111'1100'0000 };
+static constexpr int MASK_PROM { 0b0000'0000'0000'0000'1111'0000'0000'0000 };
+static constexpr int MASK_MOV { 0b0000'0000'0000'1111'0000'0000'0000'0000 };
+static constexpr int MASK_CAP { 0b0000'0000'1111'0000'0000'0000'0000'0000 };
+static constexpr int MASK_EP { 0b0000'0001'0000'0000'0000'0000'0000'0000 };
+static constexpr int MASK_DPP { 0b0000'0010'0000'0000'0000'0000'0000'0000 };
+static constexpr int MASK_CASTLING { 0b0011'1100'0000'0000'0000'0000'0000'0000 };
 
-static constexpr int OFF_FROM		= 0;
-static constexpr int OFF_TO		= 6;
-static constexpr int OFF_PROM		= 12;
-static constexpr int OFF_MOV		= 16;
-static constexpr int OFF_CAP		= 20;
-static constexpr int OFF_EP		= 24;
-static constexpr int OFF_DPP		= 25;
-static constexpr int OFF_CASTLING	= 26;
+static constexpr int OFF_FROM { 0 };
+static constexpr int OFF_TO { 6 };
+static constexpr int OFF_PROM { 12 };
+static constexpr int OFF_MOV { 16 };
+static constexpr int OFF_CAP { 20 };
+static constexpr int OFF_EP { 24 };
+static constexpr int OFF_DPP { 25 };
+static constexpr int OFF_CASTLING { 26 };
 
 // Standard constructor
 
-Move::Move() {
+Move::Move()
+{
 	setCapture(NO_PIECE);
 	setPiece(NO_PIECE);
 	setPromotion(NO_PIECE);
@@ -39,77 +40,68 @@ Move::Move() {
 
 // Getter
 
-Square Move::from() {
-	return Square((move & MASK_FROM) << OFF_FROM);
-}
+Square Move::from() { return Square((move & MASK_FROM) << OFF_FROM); }
 
-Square Move::to() {
-	return Square((move & MASK_TO) >> OFF_TO);
-}
+Square Move::to() { return Square((move & MASK_TO) >> OFF_TO); }
 
-Piece Move::promotion() {
-	return Piece((move & MASK_PROM) >> OFF_PROM);
-}
+Piece Move::promotion() { return Piece((move & MASK_PROM) >> OFF_PROM); }
 
-Piece Move::piece() {
-	return Piece((move & MASK_MOV) >> OFF_MOV);
-}
+Piece Move::piece() { return Piece((move & MASK_MOV) >> OFF_MOV); }
 
-Piece Move::capture() {
-	return Piece((move & MASK_CAP) >> OFF_CAP);
-}
+Piece Move::capture() { return Piece((move & MASK_CAP) >> OFF_CAP); }
 
-CastlingSide Move::castling() {
-	return CastlingSide((move & MASK_CASTLING) >> OFF_CASTLING);
-}
+CastlingSide Move::castling() { return CastlingSide((move & MASK_CASTLING) >> OFF_CASTLING); }
 
+bool Move::isEnPassant() { return move & MASK_EP; }
 
-bool Move::isEnPassant() {
-	return move & MASK_EP;
-}
-
-bool Move::isDoublePawnPush() {
-	return move & MASK_DPP;
-}
+bool Move::isDoublePawnPush() { return move & MASK_DPP; }
 
 // Setter
 
-void Move::setFrom(Square Square) {
+void Move::setFrom(Square Square)
+{
 	move &= ~MASK_FROM;
 	move |= Square << OFF_FROM;
 }
 
-void Move::setTo(Square Square) {
+void Move::setTo(Square Square)
+{
 	move &= ~MASK_TO;
 	move |= Square << OFF_TO;
 }
 
-void Move::setPromotion(Piece p) {
+void Move::setPromotion(Piece p)
+{
 	move &= ~MASK_PROM;
 	move |= p << OFF_PROM;
 }
 
-void Move::setPiece(Piece p) {
+void Move::setPiece(Piece p)
+{
 	move &= ~MASK_MOV;
 	move |= p << OFF_MOV;
 }
 
-void Move::setCapture(Piece p) {
+void Move::setCapture(Piece p)
+{
 	move &= ~MASK_CAP;
 	move |= p << OFF_CAP;
 }
 
-void Move::setCastling(CastlingSide c) {
+void Move::setCastling(CastlingSide c)
+{
 	move &= ~MASK_CASTLING;
 	move |= c << OFF_CASTLING;
 }
 
-void Move::flagEnPassant(bool ep) {
+void Move::flagEnPassant(bool ep)
+{
 	move &= ~MASK_EP;
 	move |= ep << OFF_EP;
 }
 
-void Move::flagDoublePawnPush(bool dpp) {
+void Move::flagDoublePawnPush(bool dpp)
+{
 	move &= ~MASK_DPP;
 	move |= dpp << OFF_DPP;
 }

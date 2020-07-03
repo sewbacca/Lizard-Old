@@ -1,9 +1,23 @@
 {
-	"catch2TestExplorer.executables": [
-		{
-			"pattern": "bin/debug/test"
-		}
-	],
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/.DS_St>ore": true,
+		".github": true,
+		"bin": true,
+		".vscode/dep": true,
+		".vscode/obj": true,
+		"**/**.cpp": false,
+		"**/**.h": false,
+		".clang-format": true
+	},
+	"C_Cpp.formatting": "Default",
+	"C_Cpp.clang_format_style": "file",
+	"C_Cpp.clang_format_sortIncludes": false,
+	"editor.formatOnSave": true,
 	"files.associations": {
 		"hash_map": "cpp",
 		"hash_set": "cpp",
@@ -67,4 +81,5 @@
 		"cinttypes": "cpp",
 		"typeinfo": "cpp"
 	},
+	"testMate.cpp.test.executables": "bin/debug/test",
 }
