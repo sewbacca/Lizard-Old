@@ -1,23 +1,23 @@
 {
 	"files.exclude": {
 		"**/.git": true,
-		"**/.svn": true,
-		"**/.hg": true,
-		"**/CVS": true,
-		"**/.DS_Store": true,
-		"**/.DS_St>ore": true,
-		".github": true,
-		"bin": true,
-		".vscode/dep": true,
-		".vscode/obj": true,
+		"**/.github": true,
+		"**/bin": true,
+		"include/catch.hpp": true,
+		"**/.clang-format": true,
+		"**/README.md": true,
+		"**/LICENSE": true,
+		"**/.gitignore": true,
+		"**/makefile": true,
 		"**/**.cpp": false,
-		"**/**.h": true,
-		".clang-format": true
+		"**/**.h": false,
 	},
 	"C_Cpp.formatting": "Default",
 	"C_Cpp.clang_format_style": "file",
 	"C_Cpp.clang_format_sortIncludes": false,
 	"editor.formatOnSave": true,
+	"testMate.cpp.test.executables": "bin/debug/test",
+	"explorerExclude.backup": {},
 	"files.associations": {
 		"hash_map": "cpp",
 		"hash_set": "cpp",
@@ -81,6 +81,4 @@
 		"cinttypes": "cpp",
 		"typeinfo": "cpp"
 	},
-	"testMate.cpp.test.executables": "bin/debug/test",
-	"explorerExclude.backup": null,
 }

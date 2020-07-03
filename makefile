@@ -16,7 +16,7 @@ PROG_EXT =
 
 # Folder
 
-OBJ_DIR = .vscode/obj
+OBJ_DIR = bin/obj
 BIN_DIR = bin
 
 SRC = src
@@ -25,8 +25,8 @@ OBJ_MAIN = $(OBJ_DIR)/$(SRC)/main.o
 TESTS = tests
 
 # Includes
-INCLUDE_GLOBAL = -Isrc
-INCLUDE_TEST = -Itest -I.vscode/dep
+INCLUDE_GLOBAL = -Isrc -Iinclude
+INCLUDE_TEST = -Itest
 
 # LD Flags
 LDFLAGS_GLOBAL = -lpthread

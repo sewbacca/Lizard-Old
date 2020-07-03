@@ -99,7 +99,7 @@ static void init_cache(std::array<Vector2D, 4> deltas, Magic::MagicBitboard magi
 			cnt++;
 			for (i = 0; i < size; i++)
 			{
-				int magic_index { w.index(occupied[i]) };
+				size_t magic_index { w.index(occupied[i]) };
 				if (epoch[magic_index] < cnt)
 				{	 // Didn't tried yet?
 					w.list[magic_index] = reference_atks[i];

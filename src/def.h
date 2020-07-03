@@ -6,7 +6,7 @@
 
 #include "enum_operator.h"
 
-constexpr char* startpos { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" };
+constexpr char startpos[] { "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" };
 
 typedef uint64_t U64;
 typedef uint64_t bitboard;
