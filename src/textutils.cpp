@@ -12,6 +12,15 @@
 #include <ctype.h>
 #include <cstdlib>
 
+const char PIECES[] = {
+	'P',
+	'N',
+	'B',
+	'R',
+	'Q',
+	'K',
+};
+
 std::string to_string(const Position& p)
 {
 	std::stringstream stream;
@@ -228,15 +237,6 @@ static std::string field(Square sq)
 
 std::string to_string(Move move)
 {
-	const char PIECES[] = {
-		'P',
-		'N',
-		'B',
-		'R',
-		'Q',
-		'K',
-	};
-
 	std::string readable { "" };
 	readable.reserve(6);
 
@@ -256,7 +256,12 @@ std::string to_string(Move move)
 
 // Uci protocol
 
-std::string to_uci(Move move) { return field(move.from()) + field(move.to()); }
+std::string to_uci(Move move)
+{
+	if (move.promotion() != NO_PIECE)
+		return field(move.from()) + field(move.to()) + (char) tolower(PIECES[move.promotion()]);
+	return field(move.from()) + field(move.to());
+}
 
 Square field(char collumn, char row) { return idx(collumn - 'a', row - '1'); }
 
