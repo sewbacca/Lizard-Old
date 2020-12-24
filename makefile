@@ -1,61 +1,68 @@
-all: exec Lizard test
+
+.PHONY: all exec tests
 
 ifndef VERBOSE
 .SILENT:
 endif
 
 ifndef CONFIG
-	CONFIG = Release
-endif
-
-# Windows
-ifeq ($(OS), Windows_NT)
-CXX = C:\MinGW\bin\g++.exe
-CMAKE = "C:\Program Files\CMake/bin\cmake.exe"
-MAKE = C:\MinGW\bin\make.exe
-
-ifndef PLATFORM
-
-PLATFORM = Windows
+CONFIG := release
 endif
 
 # Linux
-else
-CMAKE = /usr/bin/cmake
-MAKE = /usr/bin/make
 
-ifndef PLATFORM
-	PLATFORM = Linux
+MAKE := /usr/bin/make
+CXX := /usr/bin/g++
+SHELL := /bin/bash
+
+# Directories
+
+PROJECT_NAME := Lizard
+DIR_SRC := src
+DIR_TESTS := tests
+DIR_OBJ = bin/obj/$(CONFIG)
+DIR_BIN = bin/$(CONFIG)
+FILE_MAIN := src/main.cpp
+
+DEP_SRC := -lpthread
+
+# Flags
+
+FLAGS := --std=c++17 -Wall -Wextra -Iinclude -Isrc
+ifeq ($(CONFIG), release)
+FLAGS += -O3
 endif
 
-ifeq ($(PLATFORM), Windows)
-	CXX = /usr/bin/x86_64-w64-mingw32-g++-posix
+ifeq ($(CONFIG), debug)
+FLAGS += -g
 endif
 
-ifeq ($(PLATFORM), Linux)
-	CXX = /usr/bin/g++
-endif
+# Resolve files
+# FILES_SRC contains all file names without .cpp and without $(FILE_MAIN).cpp
 
-endif
+FILES_SRC = $(filter-out $(FILE_MAIN), $(wildcard $(DIR_SRC)/*.cpp))
+FILES_TESTS = $(wildcard $(DIR_TESTS)/*.cpp)
 
-switch: clean-cache
-	$(CMAKE) --no-warn-unused-cli -DCMAKE_BUILD_TYPE=$(CONFIG) -DCMAKE_CXX_COMPILER:FILEPATH=$(CXX) -G "Unix Makefiles" -B./build
+all: exec tests
 
-exec:
-	$(CMAKE) -S . -B ./build
-	cd build && $(MAKE) Lizard
+# Builds executable
+exec: $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(FILE_MAIN) $(FILES_SRC))
+	mkdir -p $(DIR_BIN)
+	echo Linking $(DIR_BIN)/$(PROJECT_NAME)
+	$(CXX) -o $(DIR_BIN)/$(PROJECT_NAME) $^ $(DEP_SRC)
+	echo Successfully built executable
 
-test:
-	# $(CMAKE) --build ./build --target Lizard-tests
-	$(CMAKE) -S . -B ./build
-	cd build && $(MAKE) Lizard-tests
+# Builds executable
+tests: $(patsubst %.cpp,$(DIR_OBJ)/%.o,$(FILES_TESTS) $(FILES_SRC))
+	mkdir -p $(DIR_BIN)
+	echo Linking $(DIR_BIN)/tests
+	$(CXX) -o $(DIR_BIN)/tests $^ $(DEP_SRC)
+	echo Successfully built tests
 
-clean-bin:
-	rm -rf bin/*
+$(DIR_OBJ)/%.o: %.cpp
+	mkdir -p $(dir $@)
+	echo Compiling $<...
+	$(CXX) $(FLAGS) -c -o $@ $<
 
 clean:
-	cd build && $(MAKE) clean
-
-clean-cache:
-	rm -f build/CMakeCache.txt
-	rm -rf build/CMakeFiles
+	rm bin -rv

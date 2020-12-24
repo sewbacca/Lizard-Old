@@ -2,14 +2,14 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "GDB",
+			"name": "Debug Lizard",
 			"type": "cppdbg",
 			"request": "launch",
 			"program": "${workspaceFolder}/bin/debug/Lizard",
 			"args": [],
 			"cwd": "${workspaceFolder}/bin/debug",
 			"environment": [],
-			"preLaunchTask": "Compile Lizard",
+			"preLaunchTask": "Compile Lizard (Debug)",
 			"MIMode": "gdb",
 			"setupCommands": [
 				{
@@ -20,10 +20,10 @@
 			]
 		},
 		{
-			"name": "Tests",
+			"name": "Run tests",
 			"type": "cppdbg",
 			"request": "launch",
-			"program": "${workspaceFolder}/bin/debug/Lizard-tests",
+			"program": "${workspaceFolder}/bin/debug/tests",
 			"args": [],
 			"cwd": "${workspaceFolder}/bin/debug",
 			"environment": [],

@@ -2,13 +2,88 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Clean all",
+			"command": "make clean",
+			"type": "shell",
+			"group": "build",
+			"problemMatcher": [
+				"$gcc",
+			]
+		},
+		{
+			"label": "Compile Lizard (Release)",
+			"command": "CONFIG=release make exec -j",
+			"type": "shell",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Test",
+			"dependsOn": "Compile Tests",
+			"command": "${command:test-explorer.run-all}",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Compile Lizard (Debug)",
+			"command": "CONFIG=debug make exec  -j",
+			"type": "shell",
+			"problemMatcher": [
+				"$gcc",
+				{
+					"owner": "/usr/bin/ld",
+					"source": "Linker",
+					"fileLocation": "absolute",
+					"pattern": [
+						{
+							"regexp": "/usr/bin/ld"
+						},
+						{
+							"regexp": "([^:]+):(\\d+): ([^:]+)",
+							"file": 1,
+							"line": 2,
+							"message": 3
+						}
+					]
+				}
+			],
+			"presentation": {
+				"reveal": "always",
+				"revealProblems": "onProblem",
+				"echo": true,
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": true
+			},
+			"group": "build"
+		},
+		{
 			"label": "Compile Tests",
-			"command": "make test",
+			"command": "CONFIG=debug make tests -j",
 			"type": "shell",
 			"problemMatcher": [
 				{
 					"base": "$gcc",
 					"fileLocation": "autoDetect"
+				},
+				{
+					"owner": "/usr/bin/ld",
+					"source": "Linker",
+					"fileLocation": "absolute",
+					"pattern": [
+						{
+							"regexp": "/usr/bin/ld"
+						},
+						{
+							"regexp": "([^:]+):(\\d+): ([^:]+)",
+							"file": 1,
+							"line": 2,
+							"message": 3
+						}
+					]
 				},
 				{
 					"owner": "test.exe",
@@ -34,117 +109,6 @@
 				"clear": true
 			},
 			"group": "build"
-		},
-		{
-			"label": "Compile Lizard",
-			"command": "make exec",
-			"type": "shell",
-			"problemMatcher": [
-				"$gcc",
-				{
-					"fileLocation": "absolute",
-					"pattern": [
-						{
-							"regexp": "ld\\.exe: .+?:.+?:"
-						},
-						{
-							"regexp": "([cC]:.+?):(\\d+): (.+)",
-							"file": 1,
-							"line": 2,
-							"column": 0,
-							"message": 3
-						}
-					]
-				},
-				{
-					"owner": "ld.exe",
-					"source": "Linker",
-					"fileLocation": [
-						"relative",
-						"${workspaceFolder}"
-					],
-					"pattern": [
-						{
-							"regexp": "ld\\.exe: (.+?):.*?\\): (.+)",
-							"file": 1,
-							"line": 0,
-							"column": 0,
-							"message": 2
-						}
-					]
-				}
-			],
-			"presentation": {
-				"reveal": "always",
-				"revealProblems": "onProblem",
-				"echo": true,
-				"focus": false,
-				"panel": "shared",
-				"showReuseMessage": true,
-				"clear": true
-			},
-			"group": "build"
-		},
-		{
-			"label": "Test",
-			"dependsOn": "Compile Tests",
-			"command": "${command:test-explorer.run-all}",
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			}
-		},
-		{
-			"label": "Debug (Linux)",
-			"command": "make switch",
-			"type": "shell",
-			"options": {
-				"env": {
-					"PLATFORM": "Linux",
-					"CONFIG": "Debug"
-				}
-			},
-			"group": "build",
-			"problemMatcher": []
-		},
-		{
-			"label": "Release (Linux)",
-			"command": "make switch",
-			"type": "shell",
-			"options": {
-				"env": {
-					"PLATFORM": "Linux",
-					"CONFIG": "Release"
-				}
-			},
-			"group": "build",
-			"problemMatcher": []
-		},
-		{
-			"label": "Debug (Windows)",
-			"command": "make switch",
-			"type": "shell",
-			"options": {
-				"env": {
-					"PLATFORM": "Windows",
-					"CONFIG": "Debug"
-				}
-			},
-			"group": "build",
-			"problemMatcher": []
-		},
-		{
-			"label": "Release (Windows)",
-			"command": "make switch",
-			"type": "shell",
-			"options": {
-				"env": {
-					"PLATFORM": "Windows",
-					"CONFIG": "Release"
-				}
-			},
-			"group": "build",
-			"problemMatcher": []
 		}
 	]
 }

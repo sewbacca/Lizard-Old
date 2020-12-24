@@ -6,8 +6,7 @@
 		"**/CVS": true,
 		"**/.DS_Store": true,
 		"**/.github": true,
-		"**/bin": true,
-		"**/CMakeLists.txt": true,
+		"**/bin": false,
 		"**/build": true,
 		"**/.clang-format": true,
 		"**/README.md": true,
@@ -15,16 +14,13 @@
 		"**/.gitignore": true,
 		"**/makefile": true,
 		"include": true,
-		"stash": true,
-		"**/**.cpp": false,
-		"**/**.h": false
+		"stash": true
 	},
 	"C_Cpp.formatting": "Default",
 	"C_Cpp.clang_format_style": "file",
 	"C_Cpp.clang_format_sortIncludes": false,
 	"editor.formatOnSave": true,
-	"terminal.integrated.shell.linux": "bash",
-	"testMate.cpp.test.executables": "bin/debug/Lizard-tests",
+	"testMate.cpp.test.executables": "bin/debug/tests",
 	"files.associations": {
 		"hash_map": "cpp",
 		"hash_set": "cpp",
@@ -87,6 +83,5 @@
 		"stdexcept": "cpp",
 		"cinttypes": "cpp",
 		"typeinfo": "cpp"
-	},
-	"explorerExclude.backup": null,
+	}
 }
