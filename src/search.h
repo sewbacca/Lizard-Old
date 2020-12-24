@@ -5,8 +5,8 @@
 
 #include "position.h"
 
-constexpr int MATE { 3000 };
-constexpr int INFINITE { 3100 };
+constexpr int MATE { 30000 };
+constexpr int INFINITE { 31000 };
 constexpr int MAX_DEPTH { 64 };
 
 struct SearchInfo
