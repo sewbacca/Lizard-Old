@@ -3,7 +3,7 @@
 bitboard rank_bb(Square sq)
 {
 	int r { rank(sq) };
-	const bitboard ranks[] = {
+	const static bitboard ranks[] = {
 		RANK_1,
 		RANK_2,
 		RANK_3,
@@ -20,7 +20,7 @@ bitboard rank_bb(Square sq)
 bitboard file_bb(Square sq)
 {
 	int f { file(sq) };
-	const bitboard files[] = {
+	const static bitboard files[] = {
 		FILE_A,
 		FILE_B,
 		FILE_C,

@@ -58,7 +58,7 @@ static void init_cache(std::array<Vector2D, 4> deltas, Magic::MagicBitboard magi
 	bitboard occupied[4096], reference_atks[4096];
 
 	// some magic_index -> attempt count to find a magic
-	int epoch[4096] = {};
+	int epoch[4096] { };
 	int size { 0 };
 	int cnt { 0 };
 
