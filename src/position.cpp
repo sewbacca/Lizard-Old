@@ -14,7 +14,8 @@ Piece Position::get(Square sq) const
 	const bitboard* board = this->board();
 	for (Piece p { WP }; p < PIECE_TYPES; ++p)
 	{
-		if (is_set(board[p], sq)) return p;
+		if (is_set(board[p], sq))
+			return p;
 	}
 
 	return NO_PIECE;
@@ -25,7 +26,7 @@ void Position::set(Square sq, Piece p)
 	assert(is_inside(sq));
 
 	bitboard* board = this->board();
-	Piece onboard { get(sq) };
+	Piece	  onboard { get(sq) };
 
 	// Delete piece
 	if (onboard != NO_PIECE)
@@ -91,7 +92,7 @@ void Position::makeMove(Move move)
 
 	if (move.castling() == NO_CASTLING)
 	{
-		int p_dir { side == WHITE ? 1 : -1 };
+		int   p_dir { side == WHITE ? 1 : -1 };
 		Piece pawn { side == WHITE ? WP : BP };
 
 		Piece piece { move.piece() };
@@ -102,7 +103,10 @@ void Position::makeMove(Move move)
 			CastlingSide OO { side == WHITE ? W_OO : B_OO };
 			CastlingSide OOO { side == WHITE ? W_OOO : B_OOO };
 
-			if (file(move.from()) == 7) { rights &= ~OO; }
+			if (file(move.from()) == 7)
+			{
+				rights &= ~OO;
+			}
 			else if (move.from() % BOARD_SIZE == 0)
 			{
 				rights &= ~OOO;
@@ -111,7 +115,10 @@ void Position::makeMove(Move move)
 		else if (piece == pawn)
 		{
 			// Pawn extra movement
-			if (move.isDoublePawnPush()) { enpassantsq = cell(move.to() - p_dir * 8); }
+			if (move.isDoublePawnPush())
+			{
+				enpassantsq = cell(move.to() - p_dir * 8);
+			}
 			else if (move.isEnPassant())
 			{
 				set(move.to() - p_dir * 8, NO_PIECE);
@@ -128,7 +135,8 @@ void Position::makeMove(Move move)
 			rights &= ~(side == WHITE ? CS_WHITE : CS_BLACK);
 		}
 
-		if (move.capture() != NO_PIECE) fiftyply = 0;
+		if (move.capture() != NO_PIECE)
+			fiftyply = 0;
 
 		// Remove permission if rook was captured
 		if (rank(move.to()) == (side == WHITE ? 7 : 0) && piece_type(move.capture()) == ROOK)
@@ -162,6 +170,7 @@ void Position::makeMove(Move move)
 	}
 
 	hisply++;
+	ply++;
 	side = swap(side);
 }
 
@@ -170,8 +179,8 @@ void Position::undoMove()
 	assert(hisply > 0);
 
 	side = swap(side);
-
 	UndoMove undomove { history[--hisply] };
+	ply--;
 
 	Piece rook { side == WHITE ? WR : BR };
 	Piece king { side == WHITE ? WK : BK };
@@ -208,5 +217,5 @@ void Position::undoMove()
 	enpassantsq = undomove.before_enpassantsq;
 
 	// If this fails you certainly have forgotten the appropiate undoMove()
-	assert(hash() == undomove.hash);
+	// assert(hash() == undomove.hash);
 }

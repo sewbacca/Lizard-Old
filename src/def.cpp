@@ -1,3 +1,4 @@
+#include <cassert>
 #include "def.h"
 /* Move representation
 	0000 0000 0000 0000 0000 0000 0011 1111 -> From
@@ -56,9 +57,9 @@ Piece Move::capture() { return Piece((move & MASK_CAP) >> OFF_CAP); }
 
 CastlingSide Move::castling() { return CastlingSide((move & MASK_CASTLING) >> OFF_CASTLING); }
 
-bool Move::isEnPassant() { return move & MASK_EP; }
+bool Move::isEnPassant() { return (move & MASK_EP) >> OFF_EP; }
 
-bool Move::isDoublePawnPush() { return move & MASK_DPP; }
+bool Move::isDoublePawnPush() { return (move & MASK_DPP) >> OFF_DPP; }
 
 // Setter
 
@@ -76,6 +77,7 @@ void Move::setTo(Square Square)
 
 void Move::setPromotion(Piece p)
 {
+	assert(piece_type(p) != PAWN);
 	move &= ~MASK_PROM;
 	move |= p << OFF_PROM;
 }

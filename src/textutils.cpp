@@ -2,6 +2,7 @@
 #include "textutils.h"
 #include "bitboard.h"
 #include "bitboard_constants.h"
+#include "except.h"
 
 #include <sstream>
 #include <iostream>
@@ -46,10 +47,14 @@ std::string to_string(const Position& p)
 	stream << "fiftyply: " << p.fiftyply << '\n';
 
 	stream << "rights: ";
-	if (W_OO & p.rights) stream << 'K';
-	if (W_OOO & p.rights) stream << 'Q';
-	if (B_OO & p.rights) stream << 'k';
-	if (B_OOO & p.rights) stream << 'q';
+	if (W_OO & p.rights)
+		stream << 'K';
+	if (W_OOO & p.rights)
+		stream << 'Q';
+	if (B_OO & p.rights)
+		stream << 'k';
+	if (B_OOO & p.rights)
+		stream << 'q';
 	stream << '\n';
 
 	int index { lsb(p.enpassantsq) };
@@ -74,6 +79,7 @@ static const char* skipfirstwhite(const char* c)
 	return c;
 }
 
+// Skips until after next whitespace
 static const char* skipwhite(const char* c)
 {
 	while (*c != ' ' && *c != '\0')
@@ -88,14 +94,14 @@ static const char* skipwhite(const char* c)
 Position load_fen(const char* fen)
 {
 	const char* c = skipfirstwhite(fen);
-	Position result;
+	Position    result;
 
 	// Board
 	{
 		int x { 0 }, y { 7 };
 		while (*c != ' ')
 		{
-			assert(isdigit(*c) || islower(*c) || isupper(*c) || *c == '/');
+			(isdigit(*c) || islower(*c) || isupper(*c) || *c == '/');
 
 			if (isdigit(*c))
 			{	 // Skip empty pieces
@@ -143,22 +149,22 @@ Position load_fen(const char* fen)
 	{	 // Color
 		c = skipwhite(c);
 
-		if (*c == 'w') result.side = WHITE;
+		if (*c == 'w')
+			result.side = WHITE;
 		else if (*c == 'b')
 			result.side = BLACK;
 		else
-			assert(false);
+			throw_assert(false, "Invald side in fen");
 	}
 
 	{	 // Castling rights
 		c = skipwhite(c);
 
-		if (*c == '-') goto enpassantsq;
+		if (*c == '-')
+			goto enpassantsq;
 
 		while (*c != ' ')
 		{
-			assert(isupper(*c) || islower(*c));
-
 			switch (*c)
 			{
 				case 'K':
@@ -174,7 +180,7 @@ Position load_fen(const char* fen)
 					result.rights |= B_OOO;
 					break;
 				default:
-					assert(false);
+					throw_assert(false, "Invalid castling rights");
 			}
 
 			c++;
@@ -185,11 +191,14 @@ Position load_fen(const char* fen)
 	enpassantsq:
 		c = skipwhite(c);
 
-		if (*c == '-') goto fiftymoverule;
+		if (*c == '-')
+			goto fiftymoverule;
 
 		int x { *c - 'a' };
 		c++;
 		int y { *c - '1' };
+
+		throw_assert(is_inside(x, y), "En Passant Square");
 
 		result.enpassantsq = cell(idx(x, y));
 	}
@@ -205,6 +214,8 @@ Position load_fen(const char* fen)
 		c = skipwhite(c);
 
 		result.hisply = atoi(c) * 2 + (result.side == WHITE ? 0 : 1) - 2;
+
+		throw_assert(result.hisply >= 0, "Invalid hisply");
 	}
 
 	return result;
@@ -259,7 +270,11 @@ std::string to_string(Move move)
 std::string to_uci(Move move)
 {
 	if (move.promotion() != NO_PIECE)
-		return field(move.from()) + field(move.to()) + (char) tolower(PIECES[move.promotion()]);
+	{
+		assert((char)tolower(PIECES[move.promotion()] != 'p'));
+		return field(move.from()) + field(move.to()) + (char)tolower(PIECES[move.promotion()]);
+	}
+
 	return field(move.from()) + field(move.to());
 }
 
@@ -294,9 +309,12 @@ Move from_uci(std::string move, const Position& pos)
 	assert(move.size() >= 4);
 	Square from { field(move[0], move[1]) };
 	Square to { field(move[2], move[3]) };
-	Piece promotion { NO_PIECE };
+	Piece  promotion { NO_PIECE };
 
-	if (move.size() > 4) { promotion = combine(pos.side, to_piece_type(move[4])); }
+	if (move.size() > 4)
+	{
+		promotion = combine(pos.side, to_piece_type(move[4]));
+	}
 
 	Move result;
 	result.setFrom(from);

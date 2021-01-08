@@ -12,13 +12,25 @@ using std::thread;
 
 #include "position.h"
 #include "search.h"
+#include "attacks.h"
+#include "except.h"
 #include "msclock.h"
+
+static void assertmove(Move move, Position& pos)
+{
+	pos.makeMove(move);
+	if (is_in_check(pos, swap(pos.side)))
+	{
+		pos.undoMove();
+		throw_assert(false, "Invalid move");
+	}
+}
 
 void uci_loop(string author, string engine_name)
 {
-	Position pos {};
-	thread engine {};
-	thread watcher {};
+	Position   pos {};
+	thread	   engine {};
+	thread	   watcher {};
 	SearchInfo info {};
 	while (true)
 	{
@@ -43,6 +55,11 @@ void uci_loop(string author, string engine_name)
 		}
 		else if (cmd == "position")
 		{
+			// Kill thread first
+			info.stopped = true;
+			if (engine.joinable())
+				engine.join();
+
 			string fen { "" };
 			string item { "" };
 
@@ -57,17 +74,25 @@ void uci_loop(string author, string engine_name)
 			do
 			{
 				line >> item;
-				if (item == "moves") break;
+				if (item == "moves")
+					break;
 				fen += item + ' ';
 			} while (!line.eof());
 
 		loadfen:
-			pos = load_fen(fen.c_str());
-
-			while (!line.eof())
+			try
 			{
-				line >> item;
-				pos.makeMove(from_uci(item, pos));
+				pos = load_fen(fen.c_str());
+
+				while (!line.eof())
+				{
+					line >> item;
+					assertmove(from_uci(item, pos), pos);
+				}
+			}
+			catch (std::exception& e)
+			{
+				std::cerr << "Invalid fen: " << e.what() << std::endl;
 			}
 		}
 		else if (cmd == "d")
@@ -94,7 +119,10 @@ void uci_loop(string author, string engine_name)
 		{
 			// Kill thread first
 			info.stopped = true;
-			if (engine.joinable()) engine.join();
+			if (engine.joinable())
+				engine.join();
+
+			info = SearchInfo {};
 
 			int time_inc { 0 };
 			int time_left { -1 };
@@ -105,7 +133,7 @@ void uci_loop(string author, string engine_name)
 			while (!line.eof())
 			{
 				string name;
-				int value;
+				int    value;
 
 				line >> name;
 
@@ -156,7 +184,24 @@ void uci_loop(string author, string engine_name)
 			info.end     = msclock() + movetime;
 			info.stopped = false;
 
-			engine = thread(search, &info, &pos);
+			engine = thread(search, &info, &pos, [](const ReportInfo& rinfo) {
+				if (rinfo.finished)
+					std::cout << "bestmove " << to_uci(rinfo.bestmove);
+				else
+				{
+					std::cout << "info depth " << rinfo.depth << " nodes " << rinfo.nodes
+						  << " time " << rinfo.time << " nodes " << rinfo.nodes << " score "
+						  << rinfo.score_type << " " << rinfo.score / 2;
+
+					std::cout << " pv";
+
+					for (Move move : rinfo.pv)
+					{
+						std::cout << " " << to_uci(move);
+					}
+				}
+				std::cout << std::endl;
+			});
 		}
 		else if (cmd == "quit")
 		{
@@ -165,7 +210,8 @@ void uci_loop(string author, string engine_name)
 		else if (cmd == "stop")
 		{
 			info.stopped = true;
-			if (engine.joinable()) engine.join();
+			if (engine.joinable())
+				engine.join();
 		}
 	}
 }

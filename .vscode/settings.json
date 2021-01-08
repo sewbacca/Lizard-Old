@@ -6,9 +6,9 @@
 		"**/CVS": true,
 		"**/.DS_Store": true,
 		"**/.github": true,
-		"**/bin": false,
+		"**/bin": true,
 		"**/build": true,
-		"**/.clang-format": true,
+		"**/.clang-format": false,
 		"**/README.md": true,
 		"**/LICENSE": true,
 		"**/.gitignore": true,
@@ -16,12 +16,19 @@
 		"include": true,
 		"stash": true
 	},
+	"Lua.runtime.path": [
+		"perft-tests/?.lua",
+		"perft-tests/?/init.lua",
+		"perft-tests/?/?.lua"
+	],
 	"C_Cpp.formatting": "Default",
 	"C_Cpp.clang_format_style": "file",
 	"C_Cpp.clang_format_sortIncludes": false,
 	"editor.formatOnSave": true,
 	"testMate.cpp.test.executables": "bin/debug/tests",
 	"files.associations": {
+		"*.fbf": "brainfuck",
+		"*.html": "html",
 		"hash_map": "cpp",
 		"hash_set": "cpp",
 		"*.tcc": "cpp",
@@ -82,6 +89,7 @@
 		"new": "cpp",
 		"stdexcept": "cpp",
 		"cinttypes": "cpp",
-		"typeinfo": "cpp"
+		"typeinfo": "cpp",
+		"bit": "cpp"
 	}
 }
