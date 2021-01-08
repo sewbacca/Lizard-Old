@@ -51,7 +51,7 @@ static bool is_repetition(Position& pos)
 	return false;
 }
 
-static void next_move(Move* list, Move* end, Position& pos)
+static void next_move(Move* list, Move* end)
 {
 	Move* maxmove = std::max_element(
 		list, end,
@@ -132,7 +132,7 @@ static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& 
 
 	for (Move* move = moves; move < end; move++)
 	{
-		next_move(move, end, pos);
+		next_move(move, end);
 
 		if (!make_move(*move, pos))
 			continue;
@@ -174,7 +174,7 @@ static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& 
 	{
 		if (is_in_check(pos, pos.side))
 		{
-			return -(MATE - pos.ply / 2 - pos.ply % 2);
+			return -MATE + pos.ply;
 		}
 		else
 		{
@@ -271,6 +271,8 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 			rinfo.score_type = "mate";
 			rinfo.score	 = MATE - std::abs(cp);
 
+			rinfo.score = (rinfo.score + 1) / 2;
+
 			if (cp < 0)
 				rinfo.score *= -1;
 		}
@@ -298,7 +300,7 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 		}
 
 		report(rinfo);
-		std::cout << "Ordering (" << info.fhf << " / " << info.fh << "): " << (float)info.fhf / info.fh << '\n';
+		// std::cout << "Ordering (" << info.fhf << " / " << info.fh << "): " << (float)info.fhf / info.fh << '\n';
 
 		if (info.stopped)
 			break;

@@ -48,7 +48,7 @@ void perft_divide(size_t depth, Position& pos)
 	Move moves[MAX_MOVES];
 	Move* end = gen_pseudo(pos, side, moves);
 
-	size_t leaf_nodes { 0 };
+	size_t total { 0 };
 
 	std::cout << "Move count: " << end - moves << std::endl;
 
@@ -62,14 +62,14 @@ void perft_divide(size_t depth, Position& pos)
 		}
 
 		size_t local_nodes { perft(depth - 1, pos) };
-		leaf_nodes += local_nodes;
+		total += local_nodes;
 
 		std::cout << to_uci(*move) << ": " << local_nodes << std::endl;
 
 		pos.undoMove();
 	}
 
-	std::cout << "Total: " << leaf_nodes << std::endl;
+	std::cout << "Total: " << total << std::endl;
 }
 
 void step_through(size_t depth, Position& pos)

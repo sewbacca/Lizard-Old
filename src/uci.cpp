@@ -184,14 +184,17 @@ void uci_loop(string author, string engine_name)
 			info.end     = msclock() + movetime;
 			info.stopped = false;
 
-			engine = thread(search, &info, &pos, [](const ReportInfo& rinfo) {
+			engine = thread(search, &info, &pos, [&pos](const ReportInfo& rinfo) {
 				if (rinfo.finished)
+				{
+					std::cout << to_string(pos);
 					std::cout << "bestmove " << to_uci(rinfo.bestmove);
+				}
 				else
 				{
 					std::cout << "info depth " << rinfo.depth << " nodes " << rinfo.nodes
 						  << " time " << rinfo.time << " nodes " << rinfo.nodes << " score "
-						  << rinfo.score_type << " " << rinfo.score / 2;
+						  << rinfo.score_type << " " << rinfo.score;
 
 					std::cout << " pv";
 
