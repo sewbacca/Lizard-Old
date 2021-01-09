@@ -12,7 +12,6 @@
 		"**/README.md": true,
 		"**/LICENSE": true,
 		"**/.gitignore": true,
-		"**/makefile": true,
 		"include": true,
 		"stash": true
 	},
