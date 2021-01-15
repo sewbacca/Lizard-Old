@@ -45,21 +45,21 @@ Move::Move()
 
 // Getter
 
-Square Move::from() { return Square((move & MASK_FROM) << OFF_FROM); }
+Square Move::from() const { return Square((move & MASK_FROM) << OFF_FROM); }
 
-Square Move::to() { return Square((move & MASK_TO) >> OFF_TO); }
+Square Move::to() const { return Square((move & MASK_TO) >> OFF_TO); }
 
-Piece Move::promotion() { return Piece((move & MASK_PROM) >> OFF_PROM); }
+Piece Move::promotion() const { return Piece((move & MASK_PROM) >> OFF_PROM); }
 
-Piece Move::piece() { return Piece((move & MASK_MOV) >> OFF_MOV); }
+Piece Move::piece() const { return Piece((move & MASK_MOV) >> OFF_MOV); }
 
-Piece Move::capture() { return Piece((move & MASK_CAP) >> OFF_CAP); }
+Piece Move::capture() const { return Piece((move & MASK_CAP) >> OFF_CAP); }
 
-CastlingSide Move::castling() { return CastlingSide((move & MASK_CASTLING) >> OFF_CASTLING); }
+CastlingSide Move::castling() const { return CastlingSide((move & MASK_CASTLING) >> OFF_CASTLING); }
 
-bool Move::isEnPassant() { return (move & MASK_EP) >> OFF_EP; }
+bool Move::isEnPassant() const { return (move & MASK_EP) >> OFF_EP; }
 
-bool Move::isDoublePawnPush() { return (move & MASK_DPP) >> OFF_DPP; }
+bool Move::isDoublePawnPush() const { return (move & MASK_DPP) >> OFF_DPP; }
 
 // Setter
 

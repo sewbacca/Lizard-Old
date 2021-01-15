@@ -22,6 +22,7 @@ struct SearchInfo
 
 	int fhf { 0 };
 	int fh { 0 };
+	int nullcut { 0 };
 };
 
 struct ReportInfo

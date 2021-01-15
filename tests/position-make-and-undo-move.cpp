@@ -18,7 +18,7 @@ TEST_CASE("Make move double jump", "[position]")
 	move.flagDoublePawnPush(true);
 	move.setPiece(WP);
 
-	start.makeMove(move);
+	start.make_move(move);
 
 	CHECK(move.capture() == NO_PIECE);
 
@@ -29,7 +29,7 @@ TEST_CASE("Make move double jump", "[position]")
 	CHECK(start.enpassantsq == cell(20));
 	CHECK(start.side == BLACK);
 
-	start.undoMove();
+	start.undo_move();
 
 	CHECK(hash == start.hash());
 }
@@ -48,7 +48,7 @@ TEST_CASE("Make move en passant", "[position]")
 	move.setPiece(WP);
 	move.setCapture(BP);
 
-	pos.makeMove(move);
+	pos.make_move(move);
 
 	CHECK(pos.get(sq("e5")) == NO_PIECE);
 	CHECK(pos.get(sq("f6")) == WP);
@@ -58,7 +58,7 @@ TEST_CASE("Make move en passant", "[position]")
 	CHECK(pos.enpassantsq == 0);
 	CHECK(pos.side == BLACK);
 
-	pos.undoMove();
+	pos.undo_move();
 
 	CHECK(hash == pos.hash());
 }
@@ -77,7 +77,7 @@ TEST_CASE("Make move promotion", "[position]")
 	move.setPiece(WP);
 	move.setCapture(BN);
 
-	pos.makeMove(move);
+	pos.make_move(move);
 
 	CHECK(pos.get(sq("f7")) == NO_PIECE);
 	CHECK(pos.get(sq("g8")) == WQ);
@@ -86,7 +86,7 @@ TEST_CASE("Make move promotion", "[position]")
 	CHECK(pos.enpassantsq == 0);
 	CHECK(pos.side == BLACK);
 
-	pos.undoMove();
+	pos.undo_move();
 
 	CHECK(hash == pos.hash());
 }
@@ -106,7 +106,7 @@ TEST_CASE("Make move destroy castling", "[position]")
 		move.setTo(sq("e7"));
 		move.setPiece(BK);
 
-		pos.makeMove(move);
+		pos.make_move(move);
 
 		CHECK(pos.get(sq("e8")) == NO_PIECE);
 		CHECK(pos.get(sq("e7")) == BK);
@@ -114,7 +114,7 @@ TEST_CASE("Make move destroy castling", "[position]")
 		CHECK(pos.rights == CS_WHITE);
 		CHECK(pos.hisply == 12);
 
-		pos.undoMove();
+		pos.undo_move();
 
 		CHECK(hash == pos.hash());
 	}
@@ -123,7 +123,7 @@ TEST_CASE("Make move destroy castling", "[position]")
 	{
 		Move move { from_uci("a8a7", pos) };
 
-		pos.makeMove(move);
+		pos.make_move(move);
 
 		CHECK(pos.get(sq("a8")) == NO_PIECE);
 		CHECK(pos.get(sq("a7")) == BR);
@@ -131,7 +131,7 @@ TEST_CASE("Make move destroy castling", "[position]")
 		CHECK(pos.rights == (CS_ALL & ~B_OOO));
 		CHECK(pos.hisply == 12);
 
-		pos.undoMove();
+		pos.undo_move();
 
 		CHECK(hash == pos.hash());
 	}
@@ -144,7 +144,7 @@ TEST_CASE("Make move destroy castling", "[position]")
 		move.setTo(sq("h7"));
 		move.setPiece(BR);
 
-		pos.makeMove(move);
+		pos.make_move(move);
 
 		CHECK(pos.get(sq("h8")) == NO_PIECE);
 		CHECK(pos.get(sq("h7")) == BR);
@@ -152,7 +152,7 @@ TEST_CASE("Make move destroy castling", "[position]")
 		CHECK(pos.rights == (CS_ALL & ~B_OO));
 		CHECK(pos.hisply == 12);
 
-		pos.undoMove();
+		pos.undo_move();
 
 		CHECK(hash == pos.hash());
 	}
@@ -171,14 +171,14 @@ TEST_CASE("Make move castling", "[Position]")
 		move.setTo(sq("h8"));
 		move.setCastling(B_OO);
 
-		pos.makeMove(move);
+		pos.make_move(move);
 
 		CHECK(pos.get(sq("h8")) == NO_PIECE);
 		CHECK(pos.get(sq("g8")) == BK);
 		CHECK(pos.get(sq("f8")) == BR);
 		CHECK(pos.get(sq("e8")) == NO_PIECE);
 
-		pos.undoMove();
+		pos.undo_move();
 
 		CHECK(hash == pos.hash());
 	}
@@ -191,7 +191,7 @@ TEST_CASE("Make move castling", "[Position]")
 		move.setTo(sq("a8"));
 		move.setCastling(B_OOO);
 
-		pos.makeMove(move);
+		pos.make_move(move);
 
 		CHECK(pos.get(sq("e8")) == NO_PIECE);
 		CHECK(pos.get(sq("d8")) == BR);
@@ -199,7 +199,7 @@ TEST_CASE("Make move castling", "[Position]")
 		CHECK(pos.get(sq("b8")) == NO_PIECE);
 		CHECK(pos.get(sq("a8")) == NO_PIECE);
 
-		pos.undoMove();
+		pos.undo_move();
 
 		CHECK(hash == pos.hash());
 	}

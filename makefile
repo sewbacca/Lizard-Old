@@ -30,7 +30,7 @@ DEP_SRC := -lpthread
 
 FLAGS := --std=c++17 -Wall -Wextra -Iinclude -Isrc
 ifeq ($(CONFIG), release)
-FLAGS += -O3
+FLAGS += -O3 -D NDEBUG
 endif
 
 ifeq ($(CONFIG), debug)

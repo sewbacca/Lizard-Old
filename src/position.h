@@ -9,6 +9,7 @@ class UndoMove : public Move
 {
       public:
 	CastlingSide before_rights { NO_CASTLING };
+	CastlingSide before_done_castles { NO_CASTLING };
 	bitboard before_enpassantsq { 0 };
 	int before_fiftyply { 0 };
 
@@ -29,6 +30,8 @@ class Position
 	UndoMove history[MAX_HISTORY];
 	Color side { WHITE };
 	CastlingSide rights { NO_CASTLING };
+	CastlingSide done_castles { NO_CASTLING };
+
 	bitboard enpassantsq { 0 };
 
 	int fiftyply { 0 };
@@ -49,14 +52,18 @@ class Position
 	void set(Square, Piece);
 	Piece get(Square) const;
 
-	Square piecepos[PIECE_TYPES][MAX_PIECES];
-	int piececount[PIECE_TYPES] {};
+	Square piecepos[PIECE_COUNT][MAX_PIECES];
+	int piececount[PIECE_COUNT] {};
+	int bigpieces[2] {};
 
 	Move search_killers[MAX_HISTORY][2]		  = {};
 	int history_heuristic[SQUARE_COUNT][SQUARE_COUNT] = {};
 
 	U64 hash() const;
 
-	void makeMove(Move);
-	void undoMove();
+	void make_move(Move);
+	void undo_move();
+
+	void make_null();
+	void undo_null();
 };

@@ -10,6 +10,13 @@ bitboard cell(Square Square)
 	return 1ULL << Square;
 }
 
+bitboard cell(int x, int y)
+{
+	if(!is_inside(x, y)) return 0;
+
+	return 1ULL << idx(x, y);
+}
+
 bool is_set(bitboard board, Square Square)
 {
 	assert(is_inside(Square));

@@ -9,7 +9,7 @@ TEST_CASE("Store and probe a move", "[pv]")
 	Move move { from_uci("e2e4", pos) };
 	store_pv(pos.hash(), move);
 	CHECK(probe_pv(pos.hash()) == move);
-	pos.makeMove(move);
+	pos.make_move(move);
 	move = from_uci("e7e5", pos);
 	store_pv(pos.hash(), move);
 	CHECK(probe_pv(pos.hash()) == move);

@@ -12,7 +12,7 @@ Piece Position::get(Square sq) const
 	assert(is_inside(sq));
 
 	const bitboard* board = this->board();
-	for (Piece p { WP }; p < PIECE_TYPES; ++p)
+	for (Piece p { WP }; p < PIECE_COUNT; ++p)
 	{
 		if (is_set(board[p], sq))
 			return p;
@@ -41,6 +41,11 @@ void Position::set(Square sq, Piece p)
 			{
 				std::swap(*pos, *(piecepos[onboard] + piececount[onboard] - 1));
 				piececount[onboard]--;
+
+				PieceType type { piece_type(onboard) };
+				if(type == ROOK || type == QUEEN)
+					bigpieces[piece_col(p)]--;
+
 				break;
 			}
 		}
@@ -53,7 +58,13 @@ void Position::set(Square sq, Piece p)
 	{
 		board[p] |= cell(sq);
 		piecepos[p][piececount[p]] = sq;
+
 		piececount[p]++;
+		
+		// Check if big piece
+		PieceType type { piece_type(p) };
+		if(type == ROOK || type == QUEEN)
+			bigpieces[piece_col(p)]++;
 
 		m_hash ^= get_hash(sq, p);
 	}
@@ -71,17 +82,19 @@ constexpr Square POS_BR2 { idx(7, 7) };
 constexpr Square POS_WK { idx(4, 0) };
 constexpr Square POS_BK { idx(4, 7) };
 
-void Position::makeMove(Move move)
+void Position::make_move(Move move)
 {
 	// Store for restore
 	history[hisply]	   = UndoMove(move);
-	UndoMove& undoMove = history[hisply];
+	UndoMove& undoMove = history[hisply++];
+	ply++;
 
 	undoMove.hash = hash();
 
-	undoMove.before_enpassantsq = enpassantsq;
-	undoMove.before_rights	    = rights;
-	undoMove.before_fiftyply    = fiftyply;
+	undoMove.before_enpassantsq  = enpassantsq;
+	undoMove.before_rights	     = rights;
+	undoMove.before_fiftyply     = fiftyply;
+	undoMove.before_done_castles = done_castles;
 
 	Piece rook { side == WHITE ? WR : BR };
 	Piece king { side == WHITE ? WK : BK };
@@ -167,14 +180,14 @@ void Position::makeMove(Move move)
 		set(pos_k, NO_PIECE);
 		set(pos_k + cs_dir * 2, king);
 		set(pos_k + cs_dir * 1, rook);
+
+		done_castles |= move.castling();
 	}
 
-	hisply++;
-	ply++;
 	side = swap(side);
 }
 
-void Position::undoMove()
+void Position::undo_move()
 {
 	assert(hisply > 0);
 
@@ -212,10 +225,43 @@ void Position::undoMove()
 		set(pos_k + cs_dir * 1, NO_PIECE);
 	}
 
-	fiftyply    = undomove.before_fiftyply;
-	rights	    = undomove.before_rights;
-	enpassantsq = undomove.before_enpassantsq;
+	fiftyply     = undomove.before_fiftyply;
+	rights	     = undomove.before_rights;
+	enpassantsq  = undomove.before_enpassantsq;
+	done_castles = undomove.before_done_castles;
 
-	// If this fails you certainly have forgotten the appropiate undoMove()
-	// assert(hash() == undomove.hash);
+	// If this fails you certainly have forgotten the appropiate undo_move()
+	assert(hash() == undomove.hash);
+}
+
+void Position::make_null()
+{
+	history[hisply] = UndoMove();
+	UndoMove& undomove = history[hisply];
+	undomove.hash = hash();
+
+	ply++;
+	hisply++;
+	undomove.before_enpassantsq = enpassantsq;
+	undomove.before_fiftyply = fiftyply;
+	undomove.before_rights = rights;
+	undomove.before_done_castles = done_castles;
+
+	enpassantsq = 0ULL;
+	side = swap(side);
+}
+
+void Position::undo_null()
+{
+	ply--;
+	UndoMove& undomove = history[--hisply];
+
+	enpassantsq = undomove.before_enpassantsq;
+	fiftyply = undomove.before_fiftyply;
+	rights = undomove.before_rights;
+	done_castles = undomove.before_done_castles;
+	
+	side = swap(side);
+
+	assert(hash() == undomove.hash);
 }

@@ -65,8 +65,11 @@ std::string to_string(const Position& p)
 		stream << ('a' + index % BOARD_SIZE);
 		stream << ('0' + index / BOARD_SIZE);
 	}
-
 	stream << '\n';
+
+	stream << "turn: " << (p.side == WHITE ? "WHITE" : "BLACK") << '\n';
+	stream << "hash: " << p.hash() << '\n';
+
 
 	return stream.str();
 }
@@ -326,7 +329,11 @@ Move from_uci(std::string move, const Position& pos)
 	Piece capture { pos.get(to) };
 	result.setCapture(capture);
 	PieceType pt { piece_type(piece) };
-	result.flagEnPassant(pt == PAWN && pos.enpassantsq & cell(to) && capture != NO_PIECE);
+	result.flagEnPassant(pt == PAWN && (pos.enpassantsq & cell(to)));
+	if(result.isEnPassant())
+	{
+		result.setCapture(combine(swap(pos.side), PAWN));
+	}
 	result.flagDoublePawnPush(pt == PAWN && abs(to - from) == 16);
 	if (pt == KING && abs(from - to) == 2)
 		result.setCastling((CastlingSide)(

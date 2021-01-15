@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <cmath>
 
 #include "enum_operator.h"
 
@@ -15,7 +16,7 @@ typedef int Square;
 constexpr int MAX_PIECES { 10 };
 constexpr int BOARD_SIZE { 8 };
 constexpr int SQUARE_COUNT { BOARD_SIZE * BOARD_SIZE };
-constexpr int PIECE_TYPES { 12 };
+constexpr int PIECE_COUNT { 12 };
 
 enum Piece
 {
@@ -84,15 +85,15 @@ class Move
       public:
 	int score { 0 };
 
-	Square from();
-	Square to();
-	Piece piece();
-	Piece capture();
-	Piece promotion();
-	CastlingSide castling();
+	Square from() const;
+	Square to() const;
+	Piece piece() const;
+	Piece capture() const;
+	Piece promotion() const;
+	CastlingSide castling() const;
 
-	bool isDoublePawnPush();
-	bool isEnPassant();
+	bool isDoublePawnPush() const;
+	bool isEnPassant() const;
 
 	void setFrom(Square);
 	void setTo(Square);
@@ -108,6 +109,7 @@ class Move
 
 	friend class UndoMove;
 	friend bool operator==(Move a, Move b);
+	friend bool operator!=(Move a, Move b);
 };
 
 const Move NO_MOVE { Move() };
@@ -116,6 +118,8 @@ constexpr bool is_inside(Square);
 constexpr bool is_inside(int x, int y);
 constexpr Color swap(Color);
 constexpr Square idx(int x, int y);
+constexpr Square idx_capped(int x, int y);
+constexpr Square clamp(int value, int min, int max);
 constexpr int rank(Square);
 constexpr int file(Square);
 constexpr Color piece_col(Piece);
@@ -160,6 +164,10 @@ constexpr Color swap(Color color) { return color == WHITE ? BLACK : WHITE; }
 
 constexpr Square idx(int x, int y) { return y * BOARD_SIZE + x; }
 
+constexpr Square idx_capped(int x, int y) { return idx(clamp(x, 0, BOARD_SIZE - 1), clamp(y, 0, BOARD_SIZE - 1)); }
+
+constexpr Square clamp(int value, int min, int max) { return std::max(min, std::min(value, max)); }
+
 constexpr int rank(Square sq)
 {
 	if (!is_inside(sq)) return -1;
@@ -187,3 +195,4 @@ constexpr Piece combine(Color col, PieceType p)
 }
 
 inline bool operator==(Move a, Move b) { return a.move == b.move; }
+inline bool operator!=(Move a, Move b) { return a.move != b.move; }

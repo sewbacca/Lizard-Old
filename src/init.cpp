@@ -8,6 +8,7 @@
 #include "hash.h"
 #include "attacks.h"
 #include "pv.h"
+#include "bitboard_constants.h"
 
 struct Timer
 {
@@ -31,7 +32,9 @@ void init()
 	cache += init_hash();
 	cache += init_attacks();
 	cache += init_pv(0xFFFFF);
+	cache += init_bitboard_constants();
 
-	std::cout << "Cache size: " << (cache / 1024) << "KB\n";
+	std::cout << "Cache size: " << (long double)(cache / 1024) << "KB\n";
+	std::cout << "Position size: " << (long double)sizeof(Position) / 1024 << "KB\n";
 	std::cout << "Initialization duration: " << tim.stop() << "ms" << std::endl;
 }

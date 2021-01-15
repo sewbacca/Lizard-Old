@@ -14,28 +14,16 @@
 
 static void check_up(SearchInfo& info)
 {
-	if (info.stopped)
-		return;
-
 	if (info.end <= msclock())
 		info.stopped = true;
 }
 
 static bool exists(Move move, const Position& pos)
 {
-	if (move == NO_MOVE)
-		return false;
-
 	Move  moves[MAX_MOVES];
 	Move* end = gen_pseudo(pos, pos.side, moves);
 
-	for (Move* cmp = moves; cmp < end; cmp++)
-	{
-		if (*cmp == move)
-			return true;
-	}
-
-	return false;
+	return std::find(moves, end, move) != end;
 }
 
 static bool is_repetition(Position& pos)
@@ -67,80 +55,166 @@ static void next_move(Move* list, Move* end)
 static void index(Move* list, Move* end, Position& pos)
 {
 	const int     VALUES[] = { 1, 2, 3, 4, 5, 6 };
-	constexpr int pv         { 500'000'000 };
-	constexpr int capture    { 400'000'000 };
-	constexpr int killer0    { 300'000'000 };
-	constexpr int killer1    { 200'000'000 };
+	constexpr int pv         { 1'000'000'000 };
+	constexpr int capture    {   400'000'000 };
+	constexpr int killer0    {   300'000'000 };
+	constexpr int killer1    {   200'000'000 };
 	U64	      hash       { pos.hash() };
 
-	for (Move* move = list; move < end; move++)
+	for (Move* p_move = list; p_move < end; p_move++)
 	{
-		if (probe_pv(hash) == *move)
+		Move& move { *p_move };
+
+		if (probe_pv(hash) == move)
 		{
-			move->score += pv;
+			move.score += pv;
 		}
-		if (move->capture() != NO_PIECE)
+		if (move.capture() != NO_PIECE)
 		{
-			if (move->isEnPassant())
-				move->score += 1;
-			move->score =
-				capture + VALUES[piece_type(move->capture())] * 100 - VALUES[piece_type(move->piece())];
+			if (move.isEnPassant())
+				move.score += 1;
+
+			move.score +=
+				capture + VALUES[piece_type(move.capture())] * 100 - VALUES[piece_type(move.piece())];
 		}
-		if (pos.search_killers[pos.ply][0] == *move)
-			move->score += killer0;
-		if (pos.search_killers[pos.ply][1] == *move)
-			move->score += killer1;
-		move->score += pos.history_heuristic[move->from()][move->to()];
+		if (pos.search_killers[pos.ply][0] == move)
+			move.score += killer0;
+		if (pos.search_killers[pos.ply][1] == move)
+			move.score += killer1;
+		move.score += pos.history_heuristic[move.from()][move.to()];
 	}
 }
 
-static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& info)
+static int quiesence(int alpha, int beta, Position& pos, SearchInfo& info)
 {
 	if ((info.nodes & 2047) == 0 && !info.infinite)
-	{
 		check_up(info);
-	}
 
 	if (info.stopped)
-	{
 		return 0;
+
+	info.nodes++;
+
+	if(pos.fiftyply >= 100 || is_repetition(pos))
+		return 0;
+	
+	int stand_pat { evaluate(pos) };
+	
+	
+	if(pos.ply >= MAX_DEPTH)
+		return stand_pat;
+
+	if(stand_pat >= beta)
+		return beta;
+	
+	if(alpha < stand_pat)
+		alpha = stand_pat;
+	
+	Move captures[MAX_MOVES];
+	Move* end = gen_captures(pos, pos.side, captures);
+	int move_count { 0 };
+
+	for (Move* p_move { captures }; p_move < end; p_move++)
+	{
+		next_move(p_move, end);
+		Move& move { *p_move };
+
+		if (!make_move(move, pos))
+			continue;
+
+
+		move_count++;
+		int node { -quiesence(-beta, -alpha, pos, info) };
+		pos.undo_move();
+
+		if (info.stopped)
+			return 0;
+
+		if (node > alpha)
+		{
+			if (node >= beta)
+			{
+				if (move_count == 1)
+					info.fhf++;
+
+				info.fh++;
+
+				return beta;
+			}
+			alpha = node;
+		}
 	}
+
+	return alpha;
+}
+
+static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& info, bool do_null)
+{
+	if ((info.nodes & 2047) == 0 && !info.infinite)
+		check_up(info);
+
+	if (info.stopped)
+		return 0;
 
 	if (depth <= 0)
 	{
 		info.nodes++;
-		return evaluate(pos);	     // -quiesence(-beta, -alpha);
+		return quiesence(alpha, beta, pos, info);
 	}
 	info.nodes++;
 
 	if (pos.fiftyply >= 100 || is_repetition(pos))
-	{
 		return 0;
-	}
 	else if (pos.ply >= MAX_DEPTH)
+		return quiesence(alpha, beta, pos, info);
+
+	bool in_check = is_in_check(pos, pos.side);
+
+	if(in_check)
+		depth++;
+	
+	if(do_null && !in_check && pos.bigpieces[pos.side] > 0 && depth >= 4)
 	{
-		return evaluate(pos);
+		pos.make_null();
+		int node { -alphabeta(-beta, -beta + 1, depth - 4, pos, info, false) };
+		pos.undo_null();
+
+		if(info.stopped)
+			return 0;
+		
+		if(node >= beta && std::abs(node) < MATE - MAX_DEPTH)
+		{
+			info.nullcut++;
+			return beta;
+		}
+
 	}
 
 	Move  moves[MAX_MOVES];
 	Move* end = gen_pseudo(pos, pos.side, moves);
+
 	index(moves, end, pos);
 
+	int old_alpha { alpha };
 	int legal_count { 0 };
+	Move* bestmove { moves };
 
-	U64 hash { pos.hash() };
+	// U64 hash { pos.hash() };
 
-	for (Move* move = moves; move < end; move++)
+	for (Move* p_move = moves; p_move < end; p_move++)
 	{
-		next_move(move, end);
+		next_move(p_move, end);
+		Move& move { *p_move };
 
-		if (!make_move(*move, pos))
+		if (!make_move(move, pos))
 			continue;
+
 		// It's legal
 		legal_count++;
 
-		int node { -alphabeta(-beta, -alpha, depth - 1, pos, info) };
-		pos.undoMove();
+		int node { -alphabeta(-beta, -alpha, depth - 1, pos, info, true) };
+		pos.undo_move();
+
 		if (info.stopped)
 			return 0;
 
@@ -153,34 +227,31 @@ static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& 
 
 				info.fh++;
 
-				if (move->capture() == NO_PIECE)
+				if (move.capture() == NO_PIECE)
 				{
 					pos.search_killers[pos.ply][1] = pos.search_killers[pos.ply][0];
-					pos.search_killers[pos.ply][0] = *move;
+					pos.search_killers[pos.ply][0] = move;
 				}
 				return beta;
 			}
 			alpha = node;
-			store_pv(hash, *move);
+			bestmove = &move;
 
-			if (move->capture() == NO_PIECE)
-			{
-				pos.history_heuristic[move->from()][move->to()] += depth;
-			}
+			if (move.capture() == NO_PIECE)
+				pos.history_heuristic[move.from()][move.to()] += depth;
 		}
 	}
 
 	if (legal_count == 0)
 	{
-		if (is_in_check(pos, pos.side))
-		{
+		if (in_check)
 			return -MATE + pos.ply;
-		}
 		else
-		{
 			return 0;
-		}
 	}
+	
+	if(alpha != old_alpha)
+		store_pv(pos.hash(), *bestmove);
 
 	return alpha;
 }
@@ -196,12 +267,9 @@ static void init_search(SearchInfo& info, Position& pos)
 	pos.ply = 0;
 
 	for (int x { 0 }; x < SQUARE_COUNT; x++)
-	{
 		for (int y { 0 }; y < SQUARE_COUNT; y++)
-		{
 			pos.history_heuristic[x][y] = 0;
-		}
-	}
+
 	for (int ply { 0 }; ply < MAX_DEPTH; ply++)
 	{
 		pos.search_killers[ply][0] = NO_MOVE;
@@ -241,7 +309,7 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 			if (!make_move(*move, pos))
 				continue;
 
-			int score { -alphabeta(-INFINITE, -cp, depth - 1, pos, info) };
+			int score { -alphabeta(-INFINITE, -cp, depth - 1, pos, info, true) };
 			if (score > cp)
 			{
 				cp	 = score;
@@ -250,7 +318,7 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 				store_pv(hash, *bestmove);
 			}
 
-			pos.undoMove();
+			pos.undo_move();
 
 			if (info.stopped)
 				goto plotmove;
@@ -286,7 +354,7 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 		for (size_t i { 0 }; i < depth; i++)
 		{
 			Move bestmove { probe_pv(pos.hash()) };
-			if (!exists(bestmove, pos))
+			if (bestmove == NO_MOVE || !exists(bestmove, pos))
 				break;
 			if (!make_move(bestmove, pos))
 				break;
@@ -296,11 +364,12 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 
 		for (size_t i { 0 }; i < pv; i++)
 		{
-			pos.undoMove();
+			pos.undo_move();
 		}
 
 		report(rinfo);
-		// std::cout << "Ordering (" << info.fhf << " / " << info.fh << "): " << (float)info.fhf / info.fh << '\n';
+		std::cout << "Ordering: " << (float)info.fhf / info.fh << '\n';
+		std::cout << "Null cutoffs: " << info.nullcut << '\n';
 
 		if (info.stopped)
 			break;

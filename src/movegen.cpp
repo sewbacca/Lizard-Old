@@ -13,10 +13,10 @@
 
 bool make_move(Move pseudo_move, Position& pos)
 {
-	pos.makeMove(pseudo_move);
+	pos.make_move(pseudo_move);
 	if (is_in_check(pos, swap(pos.side)))
 	{
-		pos.undoMove();
+		pos.undo_move();
 		return false;
 	}
 
@@ -182,43 +182,6 @@ Move* gen_king_silent(const Position& pos, Color side, Move* list)
 	return list;
 }
 
-enum Horizontal
-{
-	WEST = -1,
-	NONE = 0,
-	EAST = 1
-};
-
-enum Vertical
-{
-	NORTH = 1,
-	SOUTH = -1
-};
-
-static bitboard shift(bitboard b, Horizontal offX, Vertical offY)
-{
-	int move { idx(offX, offY) };
-	if (move >= 0)
-	{
-		b <<= move;
-	}
-	else
-	{
-		b >>= -move;
-	}
-
-	if (offX == WEST)
-	{
-		b &= ~FILE_H;
-	}
-	else if (offX == EAST)
-	{
-		b &= ~FILE_A;
-	}
-
-	return b;
-}
-
 static Move* add_pawn_capture(Square from, Square to, Color side, Move* list, const Position&);
 static Move* add_pawn_en_passant(Square from, Square to, Color side, Move* list, const Position&);
 
@@ -227,7 +190,7 @@ static Move* add_pawn_double_pawn_push(Square to, Color side, Move* list, const 
 
 static Move* gen_pawn_captures(const Position& pos, Color side, Move* list)
 {
-	Vertical dir { side == WHITE ? NORTH : SOUTH };
+	Vertical dir { side == WHITE ? OFF_NORTH : OFF_SOUTH };
 
 	auto append = [&](bitboard moves, int offX,
 			      Move* add(Square from, Square to, Color side, Move * list, const Position&)) -> void {
@@ -242,22 +205,21 @@ static Move* gen_pawn_captures(const Position& pos, Color side, Move* list)
 
 	bitboard pawns { pos.pieces(side, PAWN) };
 
-	bitboard captures_west { shift(pawns, WEST, dir) };
-	bitboard captures_east { shift(pawns, EAST, dir) };
+	bitboard captures_west { shift(pawns, OFF_WEST, dir) };
+	bitboard captures_east { shift(pawns, OFF_EAST, dir) };
 	bitboard enemys { pos.pieces(swap(side)) };
 
-	// FIXME: Black can't capture west
-	append(captures_west & enemys, WEST, add_pawn_capture);
-	append(captures_east & enemys, EAST, add_pawn_capture);
-	append(captures_west & pos.enpassantsq, WEST, add_pawn_en_passant);
-	append(captures_east & pos.enpassantsq, EAST, add_pawn_en_passant);
+	append(captures_west & enemys, OFF_WEST, add_pawn_capture);
+	append(captures_east & enemys, OFF_EAST, add_pawn_capture);
+	append(captures_west & pos.enpassantsq, OFF_WEST, add_pawn_en_passant);
+	append(captures_east & pos.enpassantsq, OFF_EAST, add_pawn_en_passant);
 
 	return list;
 }
 
 static Move* gen_pawn_normal(const Position& pos, Color side, Move* list)
 {
-	Vertical dir { side == WHITE ? NORTH : SOUTH };
+	Vertical dir { side == WHITE ? OFF_NORTH : OFF_SOUTH };
 
 	auto append = [&](bitboard moves, Move* add(Square to, Color side, Move * list, const Position&)) -> void {
 		while (moves)
@@ -371,7 +333,7 @@ static Move* add_pawn_en_passant(Square from, Square to, Color side, Move* list,
 
 static Move* add_pawn_silent(Square to, Color side, Move* list, const Position&)
 {
-	Vertical dir { side == WHITE ? NORTH : SOUTH };
+	Vertical dir { side == WHITE ? OFF_NORTH : OFF_SOUTH };
 	bool	 isProm { side == WHITE ? rank(to) == 7 : rank(to) == 0 };
 
 	Square from { to + idx(0, -dir) };
@@ -393,7 +355,7 @@ static Move* add_pawn_silent(Square to, Color side, Move* list, const Position&)
 
 static Move* add_pawn_double_pawn_push(Square to, Color side, Move* list, const Position&)
 {
-	Vertical dir { side == WHITE ? NORTH : SOUTH };
+	Vertical dir { side == WHITE ? OFF_NORTH : OFF_SOUTH };
 	*list++ = create(to + idx(0, -2 * dir), to, side, NO_PIECE, NO_PIECE, false, true);
 
 	return list;

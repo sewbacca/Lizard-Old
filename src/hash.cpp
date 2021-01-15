@@ -6,7 +6,7 @@
 U64 castling[16];
 U64 black;
 U64 enpassant[BOARD_SIZE];
-U64 piece[PIECE_TYPES][SQUARE_COUNT];
+U64 piece[PIECE_COUNT][SQUARE_COUNT];
 
 size_t init_hash()
 {
@@ -22,7 +22,7 @@ size_t init_hash()
 		enpassant[i] = rand64();
 	}
 
-	for (Piece p { WP }; p < PIECE_TYPES + 1; ++p)
+	for (Piece p { WP }; p < PIECE_COUNT + 1; ++p)
 	{
 		for (int i { 0 }; i < SQUARE_COUNT; i++)
 		{

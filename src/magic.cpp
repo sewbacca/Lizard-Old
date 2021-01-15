@@ -65,7 +65,7 @@ static void init_cache(std::array<Vector2D, 4> deltas, Magic::MagicBitboard magi
 	for (Square sq { 0 }; is_inside(sq); sq++)
 	{
 		// We don't need the edges
-		bitboard edges { (RANK_EDGES & ~rank_bb(sq)) | (FILE_EDGES & ~file_bb(sq)) };
+		bitboard edges { (RANK_EDGES & ~rank_bb_sqr(sq)) | (FILE_EDGES & ~file_bb_sqr(sq)) };
 
 		Magic::MagicBitboard& w = magic_list[sq];
 

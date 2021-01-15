@@ -20,16 +20,16 @@ size_t perft(size_t depth, Position& pos)
 
 	for (Move* move = moves; move < end; move++)
 	{
-		pos.makeMove(*move);
+		pos.make_move(*move);
 		if (is_in_check(pos, side))
 		{
-			pos.undoMove();
+			pos.undo_move();
 			continue;
 		}
 
 		leaf_nodes += perft(depth - 1, pos);
 
-		pos.undoMove();
+		pos.undo_move();
 	}
 
 	return leaf_nodes;
@@ -54,10 +54,10 @@ void perft_divide(size_t depth, Position& pos)
 
 	for (Move* move = moves; move < end; move++)
 	{
-		pos.makeMove(*move);
+		pos.make_move(*move);
 		if (is_in_check(pos, side))
 		{
-			pos.undoMove();
+			pos.undo_move();
 			continue;
 		}
 
@@ -66,7 +66,7 @@ void perft_divide(size_t depth, Position& pos)
 
 		std::cout << to_uci(*move) << ": " << local_nodes << std::endl;
 
-		pos.undoMove();
+		pos.undo_move();
 	}
 
 	std::cout << "Total: " << total << std::endl;
@@ -89,16 +89,16 @@ void step_through(size_t depth, Position& pos)
 
 	for (Move* move = moves; move < end; move++)
 	{
-		pos.makeMove(*move);
+		pos.make_move(*move);
 		if (is_in_check(pos, side))
 		{
-			pos.undoMove();
+			pos.undo_move();
 			continue;
 		}
 
 		step_through(depth - 1, pos);
 
-		pos.undoMove();
+		pos.undo_move();
 
 		std::cout << to_string(pos) << std::endl;
 		std::cin.get();

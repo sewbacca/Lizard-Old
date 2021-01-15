@@ -1,0 +1,89 @@
+[Settings]
+TournamentName=Arena Tournament
+Type=0
+CurrSwissRound=0
+Rounds=10
+CurrentPair=10
+CurrentRound=2
+Level=5 -1\2/-1#2@-1|2
+
+[Options]
+QuitAfterTournament=0
+ShutDownAfterTournament=0
+RestartEngines=0
+RepeatStartPosition=1
+Startposition=0
+Variant=0
+StartPGNEPD=
+Resign=1
+ResignValue=-900
+MaxGameLength=250
+EarlyDrawFromMove=9999
+TablebaseDraw=0
+Autoflag=1
+Ponder=0
+AutoRotateInGautlet=1
+RutschSystem=1
+RestartArenaAfterGamesValue=20
+RestartArenaAtHour1=0
+RestartArenaAtHourValue=2
+ShutdownComputerAfterGames1=0
+ShutdownComputerAfterGamesValue=0
+
+[Save]
+SaveGamesPGN=1
+SaveIncompleteGamesPGN=1
+PGNFile=/home/sebastian/Tournaments/Arena.pgn
+Protocolfile=Logfile001.log
+TurTabTextfile=/home/sebastian/Tournaments/Arena.txt
+TurTabHTMLfile=/home/sebastian/Tournaments/Arena.html
+SaveTurTabText=1
+SaveTurTabHTML=1
+HTMLuseCountry=0
+HTMLuseFlags=0
+HTMLuseEnglish=0
+HTMLshortResults=0
+HTMLonlyPoints=0
+HTMLFlagsFromWebsite=0
+HTMLshowPGNfilename=1
+HTMLshowBenchmark=1
+PGNwebsite=
+HTMLWinPercent=1
+HTMLStartELO=1
+HTMLShowConditions=0
+HTMLConditions=
+HTMLTopLineColorized=0
+HTMLTableTopLineColor=6737151
+
+[Data]
+LastPGNEPDindex=1
+FirstGameDate=2021.01.12
+FirstGameTime=15:37:13
+Country=Germany
+Site=sebastian-ubuntu
+Hardware=Intel(R) Core(TM) i3-4160 CPU @ 3.60GHz 3150.249 MHz with 7.896 MB Memory
+OS=Linux 5.4.0-60-generic x86_64
+Website=
+E-Mail=
+ArenaVersion=Arena 3.10beta
+LastGameDate=2021.01.12
+LastGameTime=16:39:47
+
+[PairingResults]
+AICE Linux ------ Stockfish=00
+Vice ------ Vice1.0=1d
+AICE Linux ------ Vice=11
+Stockfish ------ Vice1.0=11
+Lizard ------ Vice=00?
+AICE Linux ------ Vice1.0=11
+AICE Linux ------ Lizard=11
+Lizard ------ Stockfish=00
+Lizard ------ Vice1.0=10
+Stockfish ------ Vice=11
+
+[Participants]
+Engine1=Lizard
+Engine2=AICE Linux
+Engine3=Vice1.0
+Engine4=Vice
+Engine5=Stockfish

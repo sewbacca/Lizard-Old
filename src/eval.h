@@ -1,4 +1,4 @@
 
 #include "position.h"
 
-int evaluate(const Position& pos);
+int evaluate(Position& pos);

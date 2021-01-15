@@ -18,10 +18,10 @@ using std::thread;
 
 static void assertmove(Move move, Position& pos)
 {
-	pos.makeMove(move);
+	pos.make_move(move);
 	if (is_in_check(pos, swap(pos.side)))
 	{
-		pos.undoMove();
+		pos.undo_move();
 		throw_assert(false, "Invalid move");
 	}
 }
