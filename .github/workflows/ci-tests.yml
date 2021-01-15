@@ -11,7 +11,7 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: test-binary
-        path: bin/debug/test
+        path: bin/debug/tests
   run-tests:
     needs: [build-tests]
     runs-on: [ubuntu-latest]
