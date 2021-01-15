@@ -7,7 +7,7 @@ jobs:
     runs-on: [ubuntu-latest]
     steps:
     - uses: actions/checkout@v1
-    - run: CONFIG=debug make tests
+    - run: CONFIG=debug make tests -j
     - uses: actions/upload-artifact@v1
       with:
         name: test-binary
@@ -19,6 +19,6 @@ jobs:
     - uses: actions/download-artifact@v1
       with:
         name: test-binary
-    - run: chmod +x test-binary/test
-    - run: test-binary/test
+    - run: chmod +x test-binary/tests
+    - run: test-binary/tests
 
