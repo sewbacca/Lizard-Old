@@ -304,7 +304,7 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 	std::sort(moves, end, [](const Move& before, const Move& after) { return before.score > after.score; });
 
 	U64 hash { pos.hash() };
-	int move_count { end - moves };
+	long long int move_count { end - moves };
 
 	for (size_t depth { 1 }; depth <= info.depth && !info.stopped; depth++)
 	{
@@ -335,12 +335,12 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 			if (info.stopped)
 				goto plotmove;
 
-			double searched_moves { move - moves + 1 };
-			double searched_time { msclock() - info.last_new_depth };
+			long double searched_moves = move - moves + 1;
+			long double searched_time = msclock() - info.last_new_depth;
 
 			if(searched_time > 0)
 			{
-				double speed {searched_time / searched_moves  };
+				long double speed {searched_time / searched_moves  };
 				info.progress = searched_moves / move_count;
 				info.end_estimate = info.start + speed * move_count;
 			}
