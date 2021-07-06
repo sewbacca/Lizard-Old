@@ -274,7 +274,7 @@ std::string to_uci(Move move)
 {
 	if (move.promotion() != NO_PIECE)
 	{
-		char promotion { tolower(PIECES[piece_type(move.promotion())]) };
+		char promotion = tolower(PIECES[piece_type(move.promotion())]);
 		assert(promotion != 'p');
 		return field(move.from()) + field(move.to()) + promotion;
 	}
