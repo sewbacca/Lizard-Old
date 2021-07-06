@@ -10,7 +10,7 @@ add_executable(${PROJECT_NAME}
 	src/main.cpp
 )
 
-add_library(lib${PROJECT_NAME}
+add_library(${PROJECT_NAME}-engine
 	src/attacks.cpp
 	src/bitboard_constants.cpp
 	src/bitboard.cpp
@@ -36,4 +36,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC src)
 target_include_directories(${PROJECT_NAME} PUBLIC src)
 
 target_link_libraries(${PROJECT_NAME} Threads::Threads)
-target_link_libraries(${PROJECT_NAME} lib${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}-engine)
