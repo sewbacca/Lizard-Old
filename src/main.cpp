@@ -6,5 +6,5 @@
 int main()
 {
 	init();
-	uci_loop("Sewbacca", "Lizard");
+	uci_main("Sewbacca", "Lizard");
 }
