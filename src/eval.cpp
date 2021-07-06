@@ -9,7 +9,7 @@
 #include <iostream>
 #include <functional>
 
-const int VALUES[] = { +100, +300, +300, +500, +900, 0, -100, -300, -300, -500, -900, 0 };
+const int VALUES[] = { +1, +3, +3, +5, +9, 0, -1, -3, -3, -5, -9, 0 };
 
 namespace PawnStructures
 {
@@ -18,7 +18,6 @@ namespace PawnStructures
 	int backpawn { -5 };
 	int blocked_pawn { -5 };
 	int double_pawns { -30 };
-
 
 	// Positive
 	int running_pawn { 35 };
@@ -32,9 +31,8 @@ namespace SmallPiece
 
 namespace KingSafety
 {
-	int no_pawns { -30 };
-	int aim_piece { -10 };
-	int castling { 50 };
+	int move_penalty { -5 };
+	int move_threshold { 3 };
 }
 
 namespace GoodSquares
@@ -42,6 +40,7 @@ namespace GoodSquares
 	const int open_file { 5 };
 	const int seventh_rank { 5 };
 	const int mobility[] { 0, 6, 5, 3, 3, 0 };
+	const int defender_penalty { -15 };
 
 	const int knight[64] = {
 		-10,	-5,	-5,	-5,	-5,	-5,	-5,	-10,
@@ -79,13 +78,21 @@ namespace GoodSquares
 	#define MIRROR64(sq) (GoodSquares::mirror[(sq)])
 }
 
-int pawn_structure(bitboard pawns, bitboard enemy_pawns, int ground_rank)
+namespace Endgame
+{
+	const int maxmaterial { 2 * (9 * 1 + 4 * 3 + 2 * 5 + 9) };
+	constexpr double ratio (double totalmaterial)
+	{
+		int x { clamp(1 - totalmaterial / Endgame::maxmaterial, 0, 1) };
+		return x * x * x;
+	}
+}
+
+static int pawn_structure(bitboard pawns, bitboard enemy_pawns, int ground_rank)
 {
 	int score = { 0 };
 	int enemy_rank { BOARD_SIZE - ground_rank - 1};
 	int walk = { ground_rank == 0 ? 1 : -1 };
-
-	// bitboard pawn_atk { shift(pawns, Horizontal::OFF_WEST, Vertical { walk }) | shift(pawns, Horizontal::OFF_EAST, Vertical { walk }) };
 
 	// Double pawns
 	for(int x { 0 }; x < BOARD_SIZE; x++)
@@ -136,13 +143,21 @@ int pawn_structure(bitboard pawns, bitboard enemy_pawns, int ground_rank)
 int evaluate(Position& pos)
 {
 	int score { 0 };
-	GamePhase phase { phase_of(pos) };
+
+	int white_mat { };
+	int black_mat { };
+	double endgame_ratio = Endgame::ratio(black_mat + white_mat);
 
 	// Give score for pieces.
 
 	for (Piece p { WP }; p < PIECE_COUNT; p++)
 	{
-		score += pos.piececount[p] * VALUES[p];
+		score += pos.piececount[p] * VALUES[p] * 100;
+
+		if(piece_col(p) == WHITE)	
+			white_mat += pos.piececount[p] * VALUES[piece_type(p)];
+		else
+			black_mat += pos.piececount[p] * VALUES[piece_type(p)];
 	}
 
 	// Give score for generally good squares
@@ -249,55 +264,23 @@ int evaluate(Position& pos)
 
 		score += (col == WHITE ? 1 : -1) * count * GoodSquares::mobility[pt];
 	}
+
 	// Kingsafety
 
-	bool black_castling = (pos.rights || pos.done_castles) & CS_BLACK;
-	bool white_castling = (pos.rights || pos.done_castles) & CS_WHITE;
-
-	if(white_castling)
-		score += KingSafety::castling;
-
-	if(black_castling)
-		score -= KingSafety::castling;
-
-	if(false && phase != GamePhase::END_GAME)
+	if(endgame_ratio < 0.8f)
 	{
-		auto count_pieces = [](Square king_pos, Vertical direction, bitboard test_pieces) {
-			auto horizontal_surroundings = [](Square pos) {
-				int x { file(pos) };
-				int y { rank(pos) };
-
-				return rectangle(idx_capped(x - 1, y), idx_capped(x + 1, y));
-			};
-
-			bitboard pieces { horizontal_surroundings(king_pos) };
-			pieces = shift(pieces, Horizontal::OFF_NONE, direction);
-			pieces &= test_pieces;
-
-			return pop_count(pieces);
+		auto king_mobility = [&pos](Square king, bitboard pieces) {
+			return pop_count(attacks_q(king, pieces) & ~pieces);
 		};
 
-		Square wk_pos { pos.piecepos[WK][0] };
-		Square bk_pos { pos.piecepos[BK][0] };
+		int wk_attackness { king_mobility(pos.piecepos[WK][0], pos.pieces(WP) & pos.pieces(WR)) };
+		int bk_attackness { king_mobility(pos.piecepos[BK][0], pos.pieces(BP) & pos.pieces(BR)) };
 
+		if(wk_attackness > KingSafety::move_threshold)
+			score += KingSafety::move_penalty * wk_attackness * black_mat;
 
-		if(count_pieces(wk_pos, Vertical::OFF_NORTH, pos.pieces(WP)) == 0)
-			score += KingSafety::no_pawns;
-		
-		if(count_pieces(bk_pos, Vertical::OFF_SOUTH, pos.pieces(BP)) == 0)
-			score -= KingSafety::no_pawns;
-
-		// static const PieceType AIM_PIECES[] { ROOK, BISHOP };
-
-		int bk_attacker = 0;
-		bk_attacker += pop_count(pos.pieces(WR) & attacks_r(bk_pos, 0ULL));
-		bk_attacker += pop_count(pos.pieces(WB) & attacks_b(bk_pos, 0ULL));
-		int wk_attacker = 0;
-		wk_attacker += pop_count(pos.pieces(BR) & attacks_r(wk_pos, 0ULL));
-		wk_attacker += pop_count(pos.pieces(BB) & attacks_b(wk_pos, 0ULL));
-
-		score += bk_attacker * KingSafety::aim_piece;
-		score -= wk_attacker * KingSafety::aim_piece;
+		if(bk_attackness > KingSafety::move_threshold)
+			score -= KingSafety::move_penalty * bk_attackness * white_mat;
 	}
 
 	// Swap score if it is blacks turn.

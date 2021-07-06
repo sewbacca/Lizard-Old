@@ -13,7 +13,6 @@
 		"**/LICENSE": true,
 		"**/.gitignore": true,
 		"include": true,
-		"stash": true
 	},
 	"Lua.runtime.path": [
 		"perft-tests/?.lua",

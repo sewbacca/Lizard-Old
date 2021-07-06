@@ -10,7 +10,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstring>
-#include <ctype.h>
+#include <cctype>
 #include <cstdlib>
 
 const char PIECES[] = {

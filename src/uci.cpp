@@ -35,6 +35,8 @@ void uci_loop(string author, string engine_name)
 	while (true)
 	{
 		string line_raw {};
+		if(!cin)
+			throw std::runtime_error("Bad cin");
 		getline(cin, line_raw);
 		stringstream line(line_raw);
 

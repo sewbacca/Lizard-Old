@@ -14,7 +14,13 @@
 
 static void check_up(SearchInfo& info)
 {
-	if (info.end <= msclock())
+	if (info.cur_depth <= 1)
+		return;
+
+	U64 cur_time { msclock() };
+	if (info.end <= cur_time)
+		info.stopped = true;
+	else if (info.progress > 0.3 && info.end_estimate > info.end)
 		info.stopped = true;
 }
 
@@ -59,13 +65,14 @@ static void index(Move* list, Move* end, Position& pos)
 	constexpr int capture    {   400'000'000 };
 	constexpr int killer0    {   300'000'000 };
 	constexpr int killer1    {   200'000'000 };
-	U64	      hash       { pos.hash() };
+	U64           hash       { pos.hash() };
+	Move          pv_move    { probe_pv(hash) };
 
 	for (Move* p_move = list; p_move < end; p_move++)
 	{
 		Move& move { *p_move };
 
-		if (probe_pv(hash) == move)
+		if (pv_move == move)
 		{
 			move.score += pv;
 		}
@@ -187,7 +194,6 @@ static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& 
 			info.nullcut++;
 			return beta;
 		}
-
 	}
 
 	Move  moves[MAX_MOVES];
@@ -298,9 +304,15 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 	std::sort(moves, end, [](const Move& before, const Move& after) { return before.score > after.score; });
 
 	U64 hash { pos.hash() };
+	int move_count { end - moves };
 
 	for (size_t depth { 1 }; depth <= info.depth && !info.stopped; depth++)
 	{
+		info.last_new_depth = msclock();
+		info.cur_depth = depth;
+		info.progress = 0;
+		info.end_estimate = info.end;
+
 		Move* bestmove = moves;
 		int   cp { -INFINITE };
 
@@ -322,6 +334,16 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 
 			if (info.stopped)
 				goto plotmove;
+
+			double searched_moves { move - moves + 1 };
+			double searched_time { msclock() - info.last_new_depth };
+
+			if(searched_time > 0)
+			{
+				double speed {searched_time / searched_moves  };
+				info.progress = searched_moves / move_count;
+				info.end_estimate = info.start + speed * move_count;
+			}
 		}
 
 		// Report intermediate result to the gui

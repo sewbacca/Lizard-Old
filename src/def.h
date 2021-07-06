@@ -154,6 +154,22 @@ enum_prefix_operator(Piece, --, -)
 
 enum_postfix_operator(Piece, --, -)
 
+// Numeric operator for Piece Types
+
+enum_operator_rhs(PieceType, int, +)
+enum_operator_rhs(PieceType, int, -)
+
+enum_operator_lhs(PieceType, +=, +)
+enum_operator_lhs(PieceType, -=, -)
+
+enum_prefix_operator(PieceType, ++, +)
+
+enum_postfix_operator(PieceType, ++, +)
+
+enum_prefix_operator(PieceType, --, -)
+
+enum_postfix_operator(PieceType, --, -)
+
 // Constexpr functions
 
 constexpr bool is_inside(Square sq) { return sq >= 0 && sq < SQUARE_COUNT; }

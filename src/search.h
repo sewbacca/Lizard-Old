@@ -12,6 +12,12 @@ constexpr int MAX_DEPTH { 64 };
 
 struct SearchInfo
 {
+	// Time control
+	U64    last_new_depth {};
+	U64    end_estimate {};
+	double progress {};
+	size_t cur_depth {};
+
 	size_t depth { MAX_DEPTH };
 	U64    start;
 	U64    end;
@@ -20,9 +26,9 @@ struct SearchInfo
 	bool   stopped { false };
 	bool   infinite { false };
 
-	int fhf { 0 };
-	int fh { 0 };
-	int nullcut { 0 };
+	int    fhf { 0 };
+	int    fh { 0 };
+	int    nullcut { 0 };
 };
 
 struct ReportInfo

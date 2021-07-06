@@ -13,7 +13,7 @@ GamePhase phase_of(const Position& pos)
 	if(pieces == 32)
 		return GamePhase::OPENING;
 	
-	if(pos.bigpieces[WHITE] <= 2 && pos.bigpieces[BLACK] <= 2 && pos.piececount[WQ] <= 0 && pos.piececount[BR] <= 0)
+	if(pos.bigpieces[WHITE] <= 2 && pos.bigpieces[BLACK] <= 2 && pos.piececount[WQ] <= 0 && pos.piececount[BQ] <= 0)
 		return GamePhase::END_GAME;
 	
 	return GamePhase::MIDDLE_GAME;
