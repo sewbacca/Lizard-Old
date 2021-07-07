@@ -64,7 +64,7 @@ private:
 	void ucinewgame(stringstream&&);
 	void read_position(stringstream&&);
 	void printboard(stringstream&&);
-	void perft_divide(stringstream&&);
+	void perft_cmd(stringstream&&);
 	void perft_timed(stringstream&&);
 	void go(stringstream&&);
 	void stop(stringstream&&);
@@ -85,7 +85,7 @@ Uci::Uci(string author, string engine_name) : author { author }, engine_name { e
 	REGISTER_AS(printboard, "d");
 	REGISTER(ucinewgame);
 	REGISTER_AS(read_position, "position");
-	REGISTER_AS(perft_divide, "perft");
+	REGISTER_AS(perft_cmd, "perft");
 	REGISTER_AS(perft_timed, "perft-timed");
 	REGISTER(go);
 	REGISTER(stop);
@@ -189,12 +189,12 @@ void Uci::printboard(stringstream&&)
 	print(to_string(pos));
 }
 
-void Uci::perft_divide(stringstream&& line)
+void Uci::perft_cmd(stringstream&& line)
 {
 	size_t depth;
 	line >> depth;
 
-	perft(depth, pos);
+	perft_divide(depth, pos);
 }
 
 void Uci::perft_timed(stringstream&& line)

@@ -15,7 +15,6 @@ add_library(${PROJECT_NAME}-engine
 	src/bitboard_constants.cpp
 	src/bitboard.cpp
 	src/def.cpp
-	src/enum_operator.cpp
 	src/eval.cpp
 	src/gamephase.cpp
 	src/hash.cpp

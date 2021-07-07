@@ -23,29 +23,28 @@ bool make_move(Move pseudo_move, Position& pos)
 	return true;
 }
 
-Move* gen_pseudo(const Position& pos, Color side, Move* list)
+void gen_pseudo(const Position& pos, Color side, MoveList& list)
 {
-	list = gen_captures(pos, side, list);
-
-	return gen_silent(pos, side, list);
+	gen_captures(pos, side, list);
+	gen_silent(pos, side, list);
 }
 
 // Helper
 
-static Move* gen_pawn_captures(const Position& pos, Color side, Move* list);
-static Move* gen_pawn_normal(const Position& pos, Color side, Move* list);
-static Move* gen_king_silent(const Position& pos, Color side, Move* list);
+static void gen_pawn_captures(const Position& pos, Color side, MoveList& list);
+static void gen_pawn_normal(const Position& pos, Color side, MoveList& list);
+static void gen_king_silent(const Position& pos, Color side, MoveList& list);
 
-static Move* add_capture(Square from, Square to, Move* list, const Position& pos);
-static Move* add_silent(Square from, Square to, Move* list, const Position& pos);
+static void add_capture(Square from, Square to, MoveList& list, const Position& pos);
+static void add_silent(Square from, Square to, MoveList& list, const Position& pos);
 
 // Details, details, details...
 
-Move* gen_captures(const Position& pos, Color side, Move* list)
+void gen_captures(const Position& pos, Color side, MoveList& list)
 {
 	bitboard all { pos.pieces() };
 
-	list = gen_pawn_captures(pos, side, list);
+	gen_pawn_captures(pos, side, list);
 
 	auto append_captures = [&](Piece piece, bitboard attacks(Square, bitboard)) -> void {
 		for (int i { 0 }; i < pos.piececount[piece]; i++)
@@ -60,7 +59,7 @@ Move* gen_captures(const Position& pos, Color side, Move* list)
 			{
 				Square to { pop_lsb(captures) };
 
-				list = add_capture(from, to, list, pos);
+				add_capture(from, to, list, pos);
 			}
 		}
 	};
@@ -76,11 +75,9 @@ Move* gen_captures(const Position& pos, Color side, Move* list)
 	append_captures(rook, attacks_r);
 	append_captures(queen, attacks_q);
 	append_captures(king, [](Square s, bitboard) { return attacks_k(s); });
-
-	return list;
 }
 
-Move* gen_silent(const Position& pos, Color side, Move* list)
+void gen_silent(const Position& pos, Color side, MoveList& list)
 {
 	bitboard all { pos.pieces() };
 
@@ -97,7 +94,7 @@ Move* gen_silent(const Position& pos, Color side, Move* list)
 			{
 				Square to { pop_lsb(non_captures) };
 
-				list = add_silent(from, to, list, pos);
+				add_silent(from, to, list, pos);
 			}
 		}
 	};
@@ -112,13 +109,11 @@ Move* gen_silent(const Position& pos, Color side, Move* list)
 	append(rook, attacks_r);
 	append(queen, attacks_q);
 
-	list = gen_king_silent(pos, side, list);
-	list = gen_pawn_normal(pos, side, list);
-
-	return list;
+	gen_king_silent(pos, side, list);
+	gen_pawn_normal(pos, side, list);
 }
 
-Move* gen_king_silent(const Position& pos, Color side, Move* list)
+void gen_king_silent(const Position& pos, Color side, MoveList& list)
 {
 	Piece	 king { combine(side, KING) };
 	bitboard all { pos.pieces() };
@@ -135,7 +130,7 @@ Move* gen_king_silent(const Position& pos, Color side, Move* list)
 		{
 			Square to { pop_lsb(non_captures) };
 
-			list = add_silent(from, to, list, pos);
+			add_silent(from, to, list, pos);
 		}
 
 		if (file(from) == 4 && !is_in_check(pos, side))
@@ -153,12 +148,14 @@ Move* gen_king_silent(const Position& pos, Color side, Move* list)
 
 				if ((free & all) == 0 && !is_attacked(walk_through, swap(side), pos))
 				{
-					Move& castle { *list++ };
+					Move castle { };
 
 					castle.setFrom(from);
 					castle.setTo(idx(6, y_0));
 					castle.setPiece(king);
 					castle.setCastling(OO);
+
+					list.push_back(castle);
 				}
 			}
 			if (pos.rights & OOO)
@@ -168,38 +165,38 @@ Move* gen_king_silent(const Position& pos, Color side, Move* list)
 
 				if ((free & all) == 0 && !is_attacked(walk_through, swap(side), pos))
 				{
-					Move& castle { *list++ };
+					Move castle { };
 
 					castle.setFrom(from);
 					castle.setTo(idx(2, y_0));
 					castle.setPiece(king);
 					castle.setCastling(OOO);
+
+					list.push_back(castle);
 				}
 			}
 		}
 	}
-
-	return list;
 }
 
-static Move* add_pawn_capture(Square from, Square to, Color side, Move* list, const Position&);
-static Move* add_pawn_en_passant(Square from, Square to, Color side, Move* list, const Position&);
+static void add_pawn_capture(Square from, Square to, Color side, MoveList& list, const Position&);
+static void add_pawn_en_passant(Square from, Square to, Color side, MoveList& list, const Position&);
 
-static Move* add_pawn_silent(Square to, Color side, Move* list, const Position&);
-static Move* add_pawn_double_pawn_push(Square to, Color side, Move* list, const Position&);
+static void add_pawn_silent(Square to, Color side, MoveList& list, const Position&);
+static void add_pawn_double_pawn_push(Square to, Color side, MoveList& list, const Position&);
 
-static Move* gen_pawn_captures(const Position& pos, Color side, Move* list)
+static void gen_pawn_captures(const Position& pos, Color side, MoveList& list)
 {
 	Vertical dir { side == WHITE ? OFF_NORTH : OFF_SOUTH };
 
 	auto append = [&](bitboard moves, int offX,
-			      Move* add(Square from, Square to, Color side, Move * list, const Position&)) -> void {
+			      void add(Square from, Square to, Color side, MoveList& list, const Position&)) -> void {
 		while (moves)
 		{
 			Square to { pop_lsb(moves) };
 			Square from { to - idx(offX, dir) };
 
-			list = add(from, to, side, list, pos);
+			add(from, to, side, list, pos);
 		}
 	};
 
@@ -213,20 +210,18 @@ static Move* gen_pawn_captures(const Position& pos, Color side, Move* list)
 	append(captures_east & enemys, OFF_EAST, add_pawn_capture);
 	append(captures_west & pos.enpassantsq, OFF_WEST, add_pawn_en_passant);
 	append(captures_east & pos.enpassantsq, OFF_EAST, add_pawn_en_passant);
-
-	return list;
 }
 
-static Move* gen_pawn_normal(const Position& pos, Color side, Move* list)
+static void gen_pawn_normal(const Position& pos, Color side, MoveList& list)
 {
 	Vertical dir { side == WHITE ? OFF_NORTH : OFF_SOUTH };
 
-	auto append = [&](bitboard moves, Move* add(Square to, Color side, Move * list, const Position&)) -> void {
+	auto append = [&](bitboard moves, void add(Square to, Color side, MoveList& list, const Position&)) -> void {
 		while (moves)
 		{
 			Square to { pop_lsb(moves) };
 
-			list = add(to, side, list, pos);
+			add(to, side, list, pos);
 		}
 	};
 
@@ -249,31 +244,29 @@ static Move* gen_pawn_normal(const Position& pos, Color side, Move* list)
 
 	append(normal, add_pawn_silent);
 	append(double_pawns, add_pawn_double_pawn_push);
-
-	return list;
 }
 
-static Move* add_capture(Square from, Square to, Move* list, const Position& pos)
+static void add_capture(Square from, Square to, MoveList& list, const Position& pos)
 {
-	Move& move { *list };
+	Move move { };
 
 	move.setFrom(from);
 	move.setTo(to);
 	move.setPiece(pos.get(from));
 	move.setCapture(pos.get(to));
 
-	return ++list;
+	list.push_back(move);
 }
 
-static Move* add_silent(Square from, Square to, Move* list, const Position& pos)
+static void add_silent(Square from, Square to, MoveList& list, const Position& pos)
 {
-	Move& move { *list };
+	Move move { };
 
 	move.setFrom(from);
 	move.setTo(to);
 	move.setPiece(pos.get(from));
 
-	return ++list;
+	list.push_back(move);
 }
 static Move create(Square from, Square to, Color side, Piece capture, Piece promotion, bool enpassant = false,
 	bool doublepush = false)
@@ -293,45 +286,41 @@ static Move create(Square from, Square to, Color side, Piece capture, Piece prom
 	return res;
 }
 
-static Move* add_pawn_capture(Square from, Square to, Color side, Move* list, const Position& pos)
+static void add_pawn_capture(Square from, Square to, Color side, MoveList& list, const Position& pos)
 {
 	bool isProm { side == WHITE ? rank(to) == 7 : rank(to) == 0 };
 
 	if (!isProm)
 	{
-		*list++ = create(from, to, side, pos.get(to), NO_PIECE);
+		list.push_back(create(from, to, side, pos.get(to), NO_PIECE));
 	}
 	else
 	{
-		*list++ = create(from, to, side, pos.get(to), combine(side, QUEEN));
-		*list++ = create(from, to, side, pos.get(to), combine(side, ROOK));
-		*list++ = create(from, to, side, pos.get(to), combine(side, BISHOP));
-		*list++ = create(from, to, side, pos.get(to), combine(side, KNIGHT));
+		list.push_back(create(from, to, side, pos.get(to), combine(side, QUEEN)));
+		list.push_back(create(from, to, side, pos.get(to), combine(side, ROOK)));
+		list.push_back(create(from, to, side, pos.get(to), combine(side, BISHOP)));
+		list.push_back(create(from, to, side, pos.get(to), combine(side, KNIGHT)));
 	}
-
-	return list;
 }
 
-static Move* add_pawn_en_passant(Square from, Square to, Color side, Move* list, const Position&)
+static void add_pawn_en_passant(Square from, Square to, Color side, MoveList& list, const Position&)
 {
 	bool isProm { side == WHITE ? rank(to) == 7 : rank(to) == 0 };
 
 	if (!isProm)
 	{
-		*list++ = create(from, to, side, combine(swap(side), PAWN), NO_PIECE, true, false);
+		list.push_back(create(from, to, side, combine(swap(side), PAWN), NO_PIECE, true, false));
 	}
 	else
 	{
-		*list++ = create(from, to, side, combine(swap(side), PAWN), combine(side, QUEEN), true, false);
-		*list++ = create(from, to, side, combine(swap(side), PAWN), combine(side, ROOK), true, false);
-		*list++ = create(from, to, side, combine(swap(side), PAWN), combine(side, BISHOP), true, false);
-		*list++ = create(from, to, side, combine(swap(side), PAWN), combine(side, KNIGHT), true, false);
+		list.push_back(create(from, to, side, combine(swap(side), PAWN), combine(side, QUEEN), true, false));
+		list.push_back(create(from, to, side, combine(swap(side), PAWN), combine(side, ROOK), true, false));
+		list.push_back(create(from, to, side, combine(swap(side), PAWN), combine(side, BISHOP), true, false));
+		list.push_back(create(from, to, side, combine(swap(side), PAWN), combine(side, KNIGHT), true, false));
 	}
-
-	return list;
 }
 
-static Move* add_pawn_silent(Square to, Color side, Move* list, const Position&)
+static void add_pawn_silent(Square to, Color side, MoveList& list, const Position&)
 {
 	Vertical dir { side == WHITE ? OFF_NORTH : OFF_SOUTH };
 	bool	 isProm { side == WHITE ? rank(to) == 7 : rank(to) == 0 };
@@ -340,23 +329,19 @@ static Move* add_pawn_silent(Square to, Color side, Move* list, const Position&)
 
 	if (!isProm)
 	{
-		*list++ = create(from, to, side, NO_PIECE, NO_PIECE);
+		list.push_back(create(from, to, side, NO_PIECE, NO_PIECE));
 	}
 	else
 	{
-		*list++ = create(from, to, side, NO_PIECE, combine(side, QUEEN));
-		*list++ = create(from, to, side, NO_PIECE, combine(side, ROOK));
-		*list++ = create(from, to, side, NO_PIECE, combine(side, BISHOP));
-		*list++ = create(from, to, side, NO_PIECE, combine(side, KNIGHT));
+		list.push_back(create(from, to, side, NO_PIECE, combine(side, QUEEN)));
+		list.push_back(create(from, to, side, NO_PIECE, combine(side, ROOK)));
+		list.push_back(create(from, to, side, NO_PIECE, combine(side, BISHOP)));
+		list.push_back(create(from, to, side, NO_PIECE, combine(side, KNIGHT)));
 	}
-
-	return list;
 }
 
-static Move* add_pawn_double_pawn_push(Square to, Color side, Move* list, const Position&)
+static void add_pawn_double_pawn_push(Square to, Color side, MoveList& list, const Position&)
 {
 	Vertical dir { side == WHITE ? OFF_NORTH : OFF_SOUTH };
-	*list++ = create(to + idx(0, -2 * dir), to, side, NO_PIECE, NO_PIECE, false, true);
-
-	return list;
+	list.push_back(create(to + idx(0, -2 * dir), to, side, NO_PIECE, NO_PIECE, false, true));
 }

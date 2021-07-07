@@ -13,14 +13,14 @@ size_t perft(size_t depth, Position& pos)
 
 	Color side { pos.side };
 
-	Move moves[MAX_MOVES];
-	Move* end = gen_pseudo(pos, side, moves);
+	MoveList moves { };
+	gen_pseudo(pos, side, moves);
 
 	size_t leaf_nodes { 0 };
 
-	for (Move* move = moves; move < end; move++)
+	for (Move& move : moves)
 	{
-		pos.make_move(*move);
+		pos.make_move(move);
 		if (is_in_check(pos, side))
 		{
 			pos.undo_move();
@@ -45,16 +45,16 @@ void perft_divide(size_t depth, Position& pos)
 
 	Color side { pos.side };
 
-	Move moves[MAX_MOVES];
-	Move* end = gen_pseudo(pos, side, moves);
+	MoveList moves { };
+	gen_pseudo(pos, side, moves);
 
 	size_t total { 0 };
 
-	std::cout << "Move count: " << end - moves << std::endl;
+	std::cout << "Move count: " << moves.size() << std::endl;
 
-	for (Move* move = moves; move < end; move++)
+	for (Move& move : moves)
 	{
-		pos.make_move(*move);
+		pos.make_move(move);
 		if (is_in_check(pos, side))
 		{
 			pos.undo_move();
@@ -64,7 +64,7 @@ void perft_divide(size_t depth, Position& pos)
 		size_t local_nodes { perft(depth - 1, pos) };
 		total += local_nodes;
 
-		std::cout << to_uci(*move) << ": " << local_nodes << std::endl;
+		std::cout << to_uci(move) << ": " << local_nodes << std::endl;
 
 		pos.undo_move();
 	}
@@ -84,12 +84,12 @@ void step_through(size_t depth, Position& pos)
 
 	Color side { pos.side };
 
-	Move moves[MAX_MOVES];
-	Move* end = gen_pseudo(pos, side, moves);
+	MoveList moves { };
+	gen_pseudo(pos, side, moves);
 
-	for (Move* move = moves; move < end; move++)
+	for (Move& move : moves)
 	{
-		pos.make_move(*move);
+		pos.make_move(move);
 		if (is_in_check(pos, side))
 		{
 			pos.undo_move();

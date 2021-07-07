@@ -26,10 +26,10 @@ static void check_up(SearchInfo& info)
 
 static bool exists(Move move, const Position& pos)
 {
-	Move  moves[MAX_MOVES];
-	Move* end = gen_pseudo(pos, pos.side, moves);
+	MoveList moves { };
+	gen_pseudo(pos, pos.side, moves);
 
-	return std::find(moves, end, move) != end;
+	return std::find(moves.begin(), moves.end(), move) != moves.end();
 }
 
 static bool is_repetition(Position& pos)
@@ -45,20 +45,21 @@ static bool is_repetition(Position& pos)
 	return false;
 }
 
-static void next_move(Move* list, Move* end)
+static void next_move(MoveList moves, Move& curmove)
 {
 	Move* maxmove = std::max_element(
-		list, end,
+		&curmove, moves.end(),
 		[](const Move& largest, const Move& cmp) {
 			return largest.score < cmp.score;
 		}
 	);
-	std::swap(*list, *maxmove);
 
-	assert(list->score >= maxmove->score);
+	std::swap(curmove, *maxmove);
+
+	assert(curmove.score >= maxmove->score);
 }
 
-static void index(Move* list, Move* end, Position& pos)
+static void index(MoveList list, Position& pos)
 {
 	const int     VALUES[] = { 1, 2, 3, 4, 5, 6 };
 	constexpr int pv         { 1'000'000'000 };
@@ -68,10 +69,8 @@ static void index(Move* list, Move* end, Position& pos)
 	U64           hash       { pos.hash() };
 	Move          pv_move    { probe_pv(hash) };
 
-	for (Move* p_move = list; p_move < end; p_move++)
+	for (Move& move : list)
 	{
-		Move& move { *p_move };
-
 		if (pv_move == move)
 		{
 			move.score += pv;
@@ -117,20 +116,19 @@ static int quiesence(int alpha, int beta, Position& pos, SearchInfo& info)
 	if(alpha < stand_pat)
 		alpha = stand_pat;
 	
-	Move captures[MAX_MOVES];
-	Move* end = gen_captures(pos, pos.side, captures);
-	int move_count { 0 };
+	MoveList captures { };
+	gen_captures(pos, pos.side, captures);
+	int legal_moves { 0 };
 
-	for (Move* p_move { captures }; p_move < end; p_move++)
+	for (Move& move : captures)
 	{
-		next_move(p_move, end);
-		Move& move { *p_move };
+		next_move(captures, move);
 
 		if (!make_move(move, pos))
 			continue;
 
 
-		move_count++;
+		legal_moves++;
 		int node { -quiesence(-beta, -alpha, pos, info) };
 		pos.undo_move();
 
@@ -141,7 +139,7 @@ static int quiesence(int alpha, int beta, Position& pos, SearchInfo& info)
 		{
 			if (node >= beta)
 			{
-				if (move_count == 1)
+				if (legal_moves == 1)
 					info.fhf++;
 
 				info.fh++;
@@ -196,21 +194,21 @@ static int alphabeta(int alpha, int beta, int depth, Position& pos, SearchInfo& 
 		}
 	}
 
-	Move  moves[MAX_MOVES];
-	Move* end = gen_pseudo(pos, pos.side, moves);
+	MoveList moves { };
+	
+	gen_pseudo(pos, pos.side, moves);
 
-	index(moves, end, pos);
+	index(moves, pos);
 
 	int old_alpha { alpha };
 	int legal_count { 0 };
-	Move* bestmove { moves };
+	Move* bestmove { moves.begin() };
 
 	// U64 hash { pos.hash() };
 
-	for (Move* p_move = moves; p_move < end; p_move++)
+	for (Move& move : moves)
 	{
-		next_move(p_move, end);
-		Move& move { *p_move };
+		next_move(moves, move);
 
 		if (!make_move(move, pos))
 			continue;
@@ -298,34 +296,33 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 
 	init_search(info, pos);
 
-	Move  moves[MAX_MOVES];
-	Move* end = gen_pseudo(pos, pos.side, moves);
-	index(moves, end, pos);
-	std::sort(moves, end, [](const Move& before, const Move& after) { return before.score > after.score; });
+	MoveList moves { };
+	gen_pseudo(pos, pos.side, moves);
+	index(moves, pos);
+	std::sort(moves.begin(), moves.end(), [](const Move& before, const Move& after) { return before.score > after.score; });
 
 	U64 hash { pos.hash() };
-	long long int move_count { end - moves };
 
-	for (size_t depth { 1 }; depth <= info.depth && !info.stopped; depth++)
+	for (size_t depth { 1 }; depth <= info.depth && info.stopped; depth++)
 	{
 		info.last_new_depth = msclock();
 		info.cur_depth = depth;
 		info.progress = 0;
 		info.end_estimate = info.end;
 
-		Move* bestmove = moves;
+		Move* bestmove = moves.begin();
 		int   cp { -INFINITE };
 
-		for (Move* move = moves; move < end; move++)
+		for (Move& move : moves)
 		{
-			if (!make_move(*move, pos))
+			if (!make_move(move, pos))
 				continue;
 
 			int score { -alphabeta(-INFINITE, -cp, depth - 1, pos, info, true) };
 			if (score > cp)
 			{
 				cp	 = score;
-				bestmove = move;
+				bestmove = &move;
 
 				store_pv(hash, *bestmove);
 			}
@@ -335,14 +332,14 @@ void search(SearchInfo* info_ptr, Position* pos_ptr, std::function<void(const Re
 			if (info.stopped)
 				goto plotmove;
 
-			long double searched_moves = move - moves + 1;
+			long double searched_moves = &move - moves.begin() + 1;
 			long double searched_time = msclock() - info.last_new_depth;
 
 			if(searched_time > 0)
 			{
 				long double speed {searched_time / searched_moves  };
-				info.progress = searched_moves / move_count;
-				info.end_estimate = info.start + speed * move_count;
+				info.progress = searched_moves / moves.size();
+				info.end_estimate = info.start + speed * moves.size();
 			}
 		}
 
