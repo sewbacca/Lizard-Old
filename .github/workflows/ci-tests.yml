@@ -16,7 +16,7 @@ jobs:
     needs: [build-tests]
     runs-on: [ubuntu-latest]
     steps:
-    - uses: actions/download-artifact@v1
+    - uses: actions/download-artifact@v4
       with:
         name: test-binary
     - run: chmod +x test-binary/tests
